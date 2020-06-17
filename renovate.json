@@ -1,5 +1,14 @@
 {
   "extends": [
     "config:base"
+  ],
+  "reviewers": [
+    "d-kuro"
+  ],
+  "postUpdateOptions": [
+    "gomodTidy"
+  ],
+  "ignoreDeps": [
+    "k8s.io/client-go"
   ]
 }
