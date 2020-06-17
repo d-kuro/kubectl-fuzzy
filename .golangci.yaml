@@ -1,0 +1,8 @@
+run:
+  tests: true
+linters:
+  enable-all: true
+  disable:
+    - gochecknoglobals
+    - goerr113
+    - maligned
