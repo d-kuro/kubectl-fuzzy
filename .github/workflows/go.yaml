@@ -14,7 +14,8 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
-      - uses: actions-contrib/golangci-lint@v1
-        version: v1.27.0
+      - uses: golangci/golangci-lint-action@v1
+        with:
+          version: v1.27.0
       - name: Run tests
         run: go test -race -v ./...
