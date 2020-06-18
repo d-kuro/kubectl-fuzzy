@@ -20,7 +20,7 @@ Uses [go-fuzzyfinder](https://github.com/ktr0731/go-fuzzyfinder), so there is no
 ```shell
 git clone https://github.com/d-kuro/kubectl-fzf.git
 cd kubectl-fzf
-make build && make install
+make install
 ```
 
 or
