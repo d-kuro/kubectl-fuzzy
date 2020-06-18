@@ -111,7 +111,7 @@ func (LogsOptions) Validate() error {
 	return nil
 }
 
-// Run opens the service in the browser.
+// Run execute fizzy finder and view logs.
 func (o *LogsOptions) Run(ctx context.Context) error {
 	client, err := kubernetes.NewClient(o.configFlags)
 	if err != nil {
