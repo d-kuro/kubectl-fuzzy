@@ -14,8 +14,8 @@ builds:
       - -s -w -X github.com/d-kuro/kubectl-fzf/pkg/cmd.Revision={{ .ShortCommit }}
 checksum:
   name_template: checksums.txt
-archive:
-  format: tar.gz
+archives:
+  - format: tar.gz
 snapshot:
   name_template: master
 changelog:
