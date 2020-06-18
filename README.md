@@ -15,6 +15,18 @@ Uses [go-fuzzyfinder](https://github.com/ktr0731/go-fuzzyfinder), so there is no
 >
 > For more information on kuberctl plugins see [documentation](https://kubernetes.io/docs/tasks/extend-kubectl/kubectl-plugins/)
 
+## Install
+
+```shell
+git clone https://github.com/d-kuro/kubectl-fzf.git
+cd kubectl-fzf
+go install ./cmd/kubectl-fzf/
+```
+
+or
+
+Please download the binaries from the [release page](https://github.com/d-kuro/kubectl-fzf/releases).
+
 ## Usage
 
 ```shell
