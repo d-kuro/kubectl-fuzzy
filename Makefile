@@ -9,3 +9,6 @@ test:
 	go test -race -covermode=atomic ./...
 lint:
 	golangci-lint run
+install:
+	go install ./cmd/kubectl-fzf/
+
