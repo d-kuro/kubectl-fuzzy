@@ -30,7 +30,7 @@ func NewCmdLogs(streams genericclioptions.IOStreams) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:          "logs",
-		Short:        "selecting a Pod with the fuzzy finder and view the log",
+		Short:        "Selecting a Pod with the fuzzy finder and view the log",
 		Example:      example,
 		SilenceUsage: true,
 		RunE: func(c *cobra.Command, args []string) error {
