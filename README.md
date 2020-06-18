@@ -2,6 +2,8 @@
 
 Fuzzy Finder kubectl!
 
+[![asciicast](https://asciinema.org/a/3E6XP5UfPtFHU374d5Vq1aLZ5.svg)](https://asciinema.org/a/3E6XP5UfPtFHU374d5Vq1aLZ5)
+
 ## Summary
 
 `kubectl-fzf` is a kubectl plugin providing a fuzzy finder selector.
