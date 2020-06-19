@@ -1,5 +1,7 @@
 # kubectl-fzf
 
+![](https://github.com/d-kuro/kubectl-fzf/workflows/Build/badge.svg)
+
 Fuzzy Finder kubectl!
 
 [![asciicast](https://asciinema.org/a/kMNLBIDAGLaNl6JcgJnUACCUr.svg)](https://asciinema.org/a/kMNLBIDAGLaNl6JcgJnUACCUr)
