@@ -1,8 +1,10 @@
 # kubectl-fzf
 
+![](https://github.com/d-kuro/kubectl-fzf/workflows/Build/badge.svg)
+
 Fuzzy Finder kubectl!
 
-[![asciicast](https://asciinema.org/a/3E6XP5UfPtFHU374d5Vq1aLZ5.svg)](https://asciinema.org/a/3E6XP5UfPtFHU374d5Vq1aLZ5)
+[![asciicast](https://asciinema.org/a/kMNLBIDAGLaNl6JcgJnUACCUr.svg)](https://asciinema.org/a/kMNLBIDAGLaNl6JcgJnUACCUr)
 
 ## Summary
 
@@ -29,8 +31,8 @@ Please download the binaries from the [release page](https://github.com/d-kuro/k
 
 ## Usage
 
-```shell
-kubectl fzf -h
+```console
+$ kubectl fzf -h
 Fuzzy Finder kubectl
 
 Usage:
@@ -38,6 +40,7 @@ Usage:
   kubectl-fzf [command]
 
 Available Commands:
+  exec        Selecting a Pod with the fuzzy finder and execute a command in a container
   help        Help about any command
   logs        Selecting a Pod with the fuzzy finder and view the log
   version     Show version
@@ -51,5 +54,5 @@ Use "kubectl-fzf [command] --help" for more information about a command.
 ## Support
 
 * [x] `kubectl logs`
-* [ ] `kubectl exec`
+* [x] `kubectl exec`
 * anything else...

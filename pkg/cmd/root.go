@@ -25,6 +25,7 @@ func NewCmdRoot(streams genericclioptions.IOStreams) *cobra.Command {
 // AddSubCmd to be added sub command for root command.
 func AddSubCmd(cmd *cobra.Command, streams genericclioptions.IOStreams) *cobra.Command {
 	cmd.AddCommand(NewCmdLogs(streams))
+	cmd.AddCommand(NewCmdExec(streams))
 	cmd.AddCommand(NewCmdVersion())
 
 	return cmd
