@@ -1,5 +1,5 @@
 builds:
-  - main: ./cmd/kubectl-fzf.go
+  - main: ./cmd/kubectl-fzf/kubectl-fzf.go
     binary: kubectl-fzf
     goos:
       - windows
