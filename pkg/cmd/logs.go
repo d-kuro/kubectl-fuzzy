@@ -8,6 +8,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
@@ -17,9 +18,9 @@ import (
 )
 
 const (
-	example = `
+	exampleLogs = `
 	# selecting a Pod with the fuzzy finder and view the log
-	kubectl fzf logs 
+	kubectl fzf logs [flags]
 `
 )
 
@@ -30,16 +31,18 @@ func NewCmdLogs(streams genericclioptions.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           "logs",
 		Short:         "Selecting a Pod with the fuzzy finder and view the log",
-		Example:       example,
+		Example:       exampleLogs,
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(c *cobra.Command, args []string) error {
 			if err := o.Complete(c, args); err != nil {
 				return err
 			}
+
 			if err := o.Validate(); err != nil {
 				return err
 			}
+
 			if err := o.Run(c.Context()); err != nil {
 				return err
 			}
@@ -71,6 +74,7 @@ type LogsOptions struct {
 	LimitBytes    int64
 }
 
+// AddFlags adds a flag to the flag set.
 func (o *LogsOptions) AddFlags(flags *pflag.FlagSet) {
 	flags.BoolVarP(&o.AllNamespaces, "all-namespaces", "A", false,
 		"If present, list the requested object(s) across all namespaces."+
