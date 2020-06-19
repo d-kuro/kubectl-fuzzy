@@ -28,10 +28,11 @@ func NewCmdLogs(streams genericclioptions.IOStreams) *cobra.Command {
 	o := NewLogsOptions(streams)
 
 	cmd := &cobra.Command{
-		Use:          "logs",
-		Short:        "Selecting a Pod with the fuzzy finder and view the log",
-		Example:      example,
-		SilenceUsage: true,
+		Use:           "logs",
+		Short:         "Selecting a Pod with the fuzzy finder and view the log",
+		Example:       example,
+		SilenceUsage:  true,
+		SilenceErrors: true,
 		RunE: func(c *cobra.Command, args []string) error {
 			if err := o.Complete(c, args); err != nil {
 				return err
