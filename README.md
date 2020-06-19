@@ -2,7 +2,7 @@
 
 Fuzzy Finder kubectl!
 
-[![asciicast](https://asciinema.org/a/3E6XP5UfPtFHU374d5Vq1aLZ5.svg)](https://asciinema.org/a/3E6XP5UfPtFHU374d5Vq1aLZ5)
+[![asciicast](https://asciinema.org/a/kMNLBIDAGLaNl6JcgJnUACCUr.svg)](https://asciinema.org/a/kMNLBIDAGLaNl6JcgJnUACCUr)
 
 ## Summary
 
