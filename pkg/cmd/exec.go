@@ -24,7 +24,7 @@ import (
 
 const (
 	exampleExec = `
-	# selecting a Pod with the fuzzy finder and execute a command in a container
+	# Selecting a Pod with the fuzzy finder and execute a command in a container
 	kubectl fzf exec [flags] -- COMMAND [args...]
 `
 )

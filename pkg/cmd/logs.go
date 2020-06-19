@@ -12,6 +12,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
+	coreclient "k8s.io/client-go/kubernetes/typed/core/v1"
 
 	"github.com/d-kuro/kubectl-fzf/pkg/fuzzyfinder"
 	"github.com/d-kuro/kubectl-fzf/pkg/kubernetes"
@@ -19,7 +20,7 @@ import (
 
 const (
 	exampleLogs = `
-	# selecting a Pod with the fuzzy finder and view the log
+	# Selecting a Pod with the fuzzy finder and view the log
 	kubectl fzf logs [flags]
 `
 )
@@ -72,6 +73,9 @@ type LogsOptions struct {
 	Timestamps    bool
 	TailLines     int64
 	LimitBytes    int64
+
+	PodClient coreclient.PodsGetter
+	Namespace string
 }
 
 // AddFlags adds a flag to the flag set.
@@ -107,7 +111,25 @@ func NewLogsOptions(streams genericclioptions.IOStreams) *LogsOptions {
 }
 
 // Complete sets all information required for get logs.
-func (LogsOptions) Complete(cmd *cobra.Command, args []string) error {
+func (o *LogsOptions) Complete(cmd *cobra.Command, args []string) error {
+	client, err := kubernetes.NewClient(o.configFlags)
+	if err != nil {
+		return fmt.Errorf("failed to new Kubernetes client: %w", err)
+	}
+
+	o.PodClient = client.CoreV1()
+
+	if !o.AllNamespaces {
+		kubeConfig := o.configFlags.ToRawKubeConfigLoader()
+
+		namespace, _, err := kubeConfig.Namespace()
+		if err != nil {
+			return fmt.Errorf("faild to get namespace from kube config: %w", err)
+		}
+
+		o.Namespace = namespace
+	}
+
 	return nil
 }
 
@@ -118,23 +140,7 @@ func (LogsOptions) Validate() error {
 
 // Run execute fizzy finder and view logs.
 func (o *LogsOptions) Run(ctx context.Context) error {
-	client, err := kubernetes.NewClient(o.configFlags)
-	if err != nil {
-		return fmt.Errorf("failed to new Kubernetes client: %w", err)
-	}
-
-	var namespace string
-
-	if !o.AllNamespaces {
-		kubeConfig := o.configFlags.ToRawKubeConfigLoader()
-		namespace, _, err = kubeConfig.Namespace()
-
-		if err != nil {
-			return fmt.Errorf("faild to get namespace from kube config: %w", err)
-		}
-	}
-
-	pods, err := client.CoreV1().Pods(namespace).List(ctx, metav1.ListOptions{})
+	pods, err := o.PodClient.Pods(o.Namespace).List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to list pods: %w", err)
 	}
@@ -153,9 +159,11 @@ func (o *LogsOptions) Run(ctx context.Context) error {
 		}
 
 		containerName = container.Name
+	} else {
+		containerName = pod.Spec.Containers[0].Name
 	}
 
-	req := client.CoreV1().Pods(pod.Namespace).GetLogs(pod.Name, &corev1.PodLogOptions{
+	req := o.PodClient.Pods(pod.Namespace).GetLogs(pod.Name, &corev1.PodLogOptions{
 		Container:    containerName,
 		Follow:       o.Follow,
 		Previous:     o.Previous,
