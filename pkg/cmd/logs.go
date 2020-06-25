@@ -14,8 +14,8 @@ import (
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	coreclient "k8s.io/client-go/kubernetes/typed/core/v1"
 
-	"github.com/d-kuro/kubectl-fzf/pkg/fuzzyfinder"
-	"github.com/d-kuro/kubectl-fzf/pkg/kubernetes"
+	"github.com/d-kuro/kubectl-fuzzy/pkg/fuzzyfinder"
+	"github.com/d-kuro/kubectl-fuzzy/pkg/kubernetes"
 )
 
 const (

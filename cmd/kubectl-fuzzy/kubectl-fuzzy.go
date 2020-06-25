@@ -9,12 +9,12 @@ import (
 	"golang.org/x/sync/errgroup"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 
-	"github.com/d-kuro/kubectl-fzf/pkg/cmd"
-	"github.com/d-kuro/kubectl-fzf/pkg/signal"
+	"github.com/d-kuro/kubectl-fuzzy/pkg/cmd"
+	"github.com/d-kuro/kubectl-fuzzy/pkg/signal"
 )
 
 func main() {
-	flags := pflag.NewFlagSet("kubectl-fzf", pflag.ExitOnError)
+	flags := pflag.NewFlagSet("kubectl-fuzzy", pflag.ExitOnError)
 	pflag.CommandLine = flags
 
 	ctx := context.Background()

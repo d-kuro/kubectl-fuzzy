@@ -1,5 +1,5 @@
-BINARY_NAME  = kubectl-fzf
-LDFLAGS      = -ldflags="-s -w -X \"github.com/d-kuro/kubectl-fzf/pkg/cmd.Revision=$(shell git rev-parse --short HEAD)\""
+BINARY_NAME  = kubectl-fuzzy
+LDFLAGS      = -ldflags="-s -w -X \"github.com/d-kuro/kubectl-fuzzy/pkg/cmd.Revision=$(shell git rev-parse --short HEAD)\""
 
 export GO111MODULE=on
 
@@ -10,5 +10,5 @@ test:
 lint:
 	golangci-lint run
 install:
-	go install ./cmd/kubectl-fzf/
+	go install ./cmd/kubectl-fuzzy/
 

@@ -1,6 +1,6 @@
 builds:
-  - main: ./cmd/kubectl-fzf/kubectl-fzf.go
-    binary: kubectl-fzf
+  - main: ./cmd/kubectl-fuzzy/kubectl-fuzzy.go
+    binary: kubectl-fuzzy
     goos:
       - windows
       - darwin
@@ -11,7 +11,7 @@ builds:
       - CGO_ENABLED=0
       - GO111MODULE=on
     ldflags:
-      - -s -w -X github.com/d-kuro/kubectl-fzf/pkg/cmd.Revision={{ .ShortCommit }}
+      - -s -w -X github.com/d-kuro/kubectl-fuzzy/pkg/cmd.Revision={{ .ShortCommit }}
 checksum:
   name_template: checksums.txt
 archives:
@@ -27,4 +27,4 @@ changelog:
 release:
   github:
     owner: d-kuro
-    name: kubectl-fzf
+    name: kubectl-fuzzy

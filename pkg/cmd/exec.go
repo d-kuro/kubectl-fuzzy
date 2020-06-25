@@ -18,8 +18,8 @@ import (
 	"k8s.io/kubectl/pkg/util/interrupt"
 	"k8s.io/kubectl/pkg/util/term"
 
-	"github.com/d-kuro/kubectl-fzf/pkg/fuzzyfinder"
-	"github.com/d-kuro/kubectl-fzf/pkg/kubernetes"
+	"github.com/d-kuro/kubectl-fuzzy/pkg/fuzzyfinder"
+	"github.com/d-kuro/kubectl-fuzzy/pkg/kubernetes"
 )
 
 const (
