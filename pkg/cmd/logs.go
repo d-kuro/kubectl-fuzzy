@@ -21,7 +21,7 @@ import (
 const (
 	exampleLogs = `
 	# Selecting a Pod with the fuzzy finder and view the log
-	kubectl fzf logs [flags]
+	kubectl fuzzy logs [flags]
 `
 )
 

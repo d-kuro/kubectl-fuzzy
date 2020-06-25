@@ -32,7 +32,7 @@ Please download the binaries from the [release page](https://github.com/d-kuro/k
 ## Usage
 
 ```console
-$ kubectl fzf -h
+$ kubectl fuzzy -h
 Fuzzy Finder kubectl
 
 Usage:
