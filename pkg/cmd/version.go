@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const Version = "v1.0.0"
+const Version = "v1.0.1"
 
 var Revision = "development"
 
