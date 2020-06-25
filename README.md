@@ -1,14 +1,14 @@
-# kubectl-fzf
+# kubectl-fuzzy
 
-![](https://github.com/d-kuro/kubectl-fzf/workflows/Build/badge.svg)
+![](https://github.com/d-kuro/kubectl-fuzzy/workflows/Build/badge.svg)
 
 Fuzzy Finder kubectl!
 
-[![asciicast](https://asciinema.org/a/kMNLBIDAGLaNl6JcgJnUACCUr.svg)](https://asciinema.org/a/kMNLBIDAGLaNl6JcgJnUACCUr)
+![](./docs/assets/kubectl-fuzzy.gif)
 
 ## Summary
 
-`kubectl-fzf` is a kubectl plugin providing a fuzzy finder selector.
+`kubectl-fuzzy` is a kubectl plugin providing a fuzzy finder selector.
 Uses [go-fuzzyfinder](https://github.com/ktr0731/go-fuzzyfinder), so there is no dependency on fzf binaries or anything else.
 
 > 📝 Notes
@@ -20,14 +20,14 @@ Uses [go-fuzzyfinder](https://github.com/ktr0731/go-fuzzyfinder), so there is no
 ## Install
 
 ```shell
-git clone https://github.com/d-kuro/kubectl-fzf.git
-cd kubectl-fzf
+git clone https://github.com/d-kuro/kubectl-fuzzy.git
+cd kubectl-fuzzy
 make install
 ```
 
 or
 
-Please download the binaries from the [release page](https://github.com/d-kuro/kubectl-fzf/releases).
+Please download the binaries from the [release page](https://github.com/d-kuro/kubectl-fuzzy/releases).
 
 ## Usage
 
@@ -36,8 +36,8 @@ $ kubectl fzf -h
 Fuzzy Finder kubectl
 
 Usage:
-  kubectl-fzf [flags]
-  kubectl-fzf [command]
+  kubectl-fuzzy [flags]
+  kubectl-fuzzy [command]
 
 Available Commands:
   exec        Selecting a Pod with the fuzzy finder and execute a command in a container
@@ -46,9 +46,9 @@ Available Commands:
   version     Show version
 
 Flags:
-  -h, --help   help for kubectl-fzf
+  -h, --help   help for kubectl-fuzzy
 
-Use "kubectl-fzf [command] --help" for more information about a command.
+Use "kubectl-fuzzy [command] --help" for more information about a command.
 ```
 
 ## Support

@@ -1,4 +1,4 @@
-module github.com/d-kuro/kubectl-fzf
+module github.com/d-kuro/kubectl-fuzzy
 
 go 1.14
 
