@@ -9,7 +9,7 @@ Fuzzy Finder kubectl!
 ## Summary
 
 `kubectl-fuzzy` is a kubectl plugin providing a fuzzy finder selector.
-Uses [go-fuzzyfinder](https://github.com/ktr0731/go-fuzzyfinder), so there is no dependency on fzf binaries or anything else.
+Uses [go-fuzzyfinder](https://github.com/ktr0731/go-fuzzyfinder), so there is no dependency on [fzf](https://github.com/junegunn/fzf) binaries or anything else.
 
 > 📝 Notes
 >
