@@ -4,7 +4,7 @@
 
 Fuzzy Finder kubectl!
 
-[![asciicast](https://asciinema.org/a/kMNLBIDAGLaNl6JcgJnUACCUr.svg)](https://asciinema.org/a/kMNLBIDAGLaNl6JcgJnUACCUr)
+![](./docs/assets/kubectl-fuzzy.gif)
 
 ## Summary
 
