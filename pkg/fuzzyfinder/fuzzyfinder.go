@@ -1,7 +1,13 @@
 package fuzzyfinder
 
 import (
+	"bytes"
 	"fmt"
+	"strings"
+
+	"k8s.io/cli-runtime/pkg/printers"
+
+	"k8s.io/cli-runtime/pkg/resource"
 
 	"github.com/ktr0731/go-fuzzyfinder"
 	corev1 "k8s.io/api/core/v1"
@@ -32,4 +38,36 @@ func Containers(containers []corev1.Container) (corev1.Container, error) {
 	}
 
 	return containers[idx], nil
+}
+
+func Infos(infos []*resource.Info, allNamespaces bool, printer printers.ResourcePrinter) (*resource.Info, error) {
+	var opts []fuzzyfinder.Option
+
+	if printer != nil {
+		opts = append(opts, fuzzyfinder.WithPreviewWindow(func(i, w, h int) string {
+			if i >= 0 {
+				buf := &bytes.Buffer{}
+				if err := printer.PrintObj(infos[i].Object, buf); err != nil {
+					return fmt.Sprintf("preview display error: %s", err)
+				}
+				return strings.TrimPrefix(buf.String(), "---\n")
+			}
+			return ""
+		}))
+	}
+
+	idx, err := fuzzyfinder.Find(infos,
+		func(i int) string {
+			if allNamespaces {
+				return fmt.Sprintf("%s (%s)", infos[i].Name, infos[i].Namespace)
+			}
+			return infos[i].Name
+		},
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return infos[idx], nil
 }
