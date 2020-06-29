@@ -5,12 +5,11 @@ import (
 	"fmt"
 	"strings"
 
-	"k8s.io/cli-runtime/pkg/printers"
-
-	"k8s.io/cli-runtime/pkg/resource"
-
 	"github.com/ktr0731/go-fuzzyfinder"
+
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/cli-runtime/pkg/printers"
+	"k8s.io/cli-runtime/pkg/resource"
 )
 
 func Pods(pods []corev1.Pod, allNamespaces bool) (corev1.Pod, error) {
