@@ -29,7 +29,7 @@ const (
 `
 )
 
-// NewCmdExec provides a cobra command wrapping LogsOptions.
+// NewCmdExec provides a cobra command wrapping ExecOptions.
 func NewCmdExec(streams genericclioptions.IOStreams) *cobra.Command {
 	o := NewExecOptions(streams)
 
@@ -99,7 +99,7 @@ func (o *ExecOptions) AddFlags(flags *pflag.FlagSet) {
 		"Stdin is a TTY")
 }
 
-// NewLogsOptions provides an instance of LogsOptions with default values.
+// NewExecOptions provides an instance of ExecOptions with default values.
 func NewExecOptions(streams genericclioptions.IOStreams) *ExecOptions {
 	return &ExecOptions{
 		StreamOptions: StreamOptions{
@@ -109,7 +109,7 @@ func NewExecOptions(streams genericclioptions.IOStreams) *ExecOptions {
 	}
 }
 
-// Complete sets all information required for get logs.
+// Complete sets all information required for execute a command in a container.
 func (o *ExecOptions) Complete(cmd *cobra.Command, args []string, argsLenAtDash int) error {
 	switch {
 	case argsLenAtDash > -1:

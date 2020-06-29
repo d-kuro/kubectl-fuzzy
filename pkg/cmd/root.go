@@ -26,6 +26,7 @@ func NewCmdRoot(streams genericclioptions.IOStreams) *cobra.Command {
 func AddSubCmd(cmd *cobra.Command, streams genericclioptions.IOStreams) *cobra.Command {
 	cmd.AddCommand(NewCmdLogs(streams))
 	cmd.AddCommand(NewCmdExec(streams))
+	cmd.AddCommand(NewCmdDescribe(streams))
 	cmd.AddCommand(NewCmdVersion())
 
 	return cmd
