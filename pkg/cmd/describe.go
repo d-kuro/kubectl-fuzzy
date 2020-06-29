@@ -94,7 +94,7 @@ func (o *DescribeOptions) AddFlags(flags *pflag.FlagSet) {
 	flags.BoolVar(&o.Preview, "preview", false,
 		"If true, display the object YAML|JSON by preview window for fuzzy finder selector.")
 	flags.StringVar(&o.PreviewFormat, "preview-format", "yaml",
-		"Rreview window output format. One of json|yaml.")
+		"Preview window output format. One of json|yaml.")
 }
 
 // NewDescribeOptions provides an instance of DescribeOptions with default values.
