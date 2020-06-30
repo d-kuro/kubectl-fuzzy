@@ -154,19 +154,19 @@ func (o *DescribeOptions) Run(ctx context.Context, args []string) error {
 		Do()
 
 	if err := r.Err(); err != nil {
-		return err
+		return fmt.Errorf("failed to request: %w", err)
 	}
 
 	infos, err := r.Infos()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get infos: %w", err)
 	}
 
 	var printer printers.ResourcePrinter
 	if o.Preview {
 		printer, err = o.printFlags.ToPrinter(o.PreviewFormat)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to get printer: %w", err)
 		}
 	}
 
@@ -179,12 +179,12 @@ func (o *DescribeOptions) Run(ctx context.Context, args []string) error {
 
 	describer, err := o.Describer(mapping)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get describer: %w", err)
 	}
 
 	s, err := describer.Describe(info.Namespace, info.Name, *o.DescriberSettings)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to generates output: %w", err)
 	}
 
 	fmt.Fprintf(o.Out, "%s", s)

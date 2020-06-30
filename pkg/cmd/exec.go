@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strings"
 
 	dockerterm "github.com/moby/term"
 	"github.com/spf13/cobra"
@@ -12,6 +13,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
+	"k8s.io/cli-runtime/pkg/printers"
 	coreclient "k8s.io/client-go/kubernetes/typed/core/v1"
 	"k8s.io/client-go/tools/remotecommand"
 	"k8s.io/kubectl/pkg/scheme"
@@ -69,6 +71,7 @@ func NewCmdExec(streams genericclioptions.IOStreams) *cobra.Command {
 // the current context on a user's KUBECONFIG.
 type ExecOptions struct {
 	configFlags *genericclioptions.ConfigFlags
+	printFlags  *genericclioptions.JSONYamlPrintFlags
 	StreamOptions
 
 	Client coreclient.CoreV1Interface
@@ -76,6 +79,9 @@ type ExecOptions struct {
 	AllNamespaces bool
 	Command       []string
 	Namespace     string
+
+	Preview       bool
+	PreviewFormat string
 }
 
 // StreamOptions holds information pertaining to the streaming session.
@@ -90,6 +96,7 @@ type StreamOptions struct {
 
 // AddFlags adds a flag to the flag set.
 func (o *ExecOptions) AddFlags(flags *pflag.FlagSet) {
+	// kubectl flags
 	flags.BoolVarP(&o.AllNamespaces, "all-namespaces", "A", false,
 		"If present, list the requested object(s) across all namespaces."+
 			"Namespace in current context is ignored even if specified with --namespace.")
@@ -97,6 +104,12 @@ func (o *ExecOptions) AddFlags(flags *pflag.FlagSet) {
 		"Pass stdin to the container")
 	flags.BoolVarP(&o.TTY, "tty", "t", false,
 		"Stdin is a TTY")
+
+	// original flags
+	flags.BoolVar(&o.Preview, "preview", false,
+		"If true, display the object YAML|JSON by preview window for fuzzy finder selector.")
+	flags.StringVar(&o.PreviewFormat, "preview-format", "yaml",
+		"Preview window output format. One of json|yaml.")
 }
 
 // NewExecOptions provides an instance of ExecOptions with default values.
@@ -106,6 +119,7 @@ func NewExecOptions(streams genericclioptions.IOStreams) *ExecOptions {
 			IOStreams: streams,
 		},
 		configFlags: genericclioptions.NewConfigFlags(true),
+		printFlags:  genericclioptions.NewJSONYamlPrintFlags(),
 	}
 }
 
@@ -140,6 +154,8 @@ func (o *ExecOptions) Complete(cmd *cobra.Command, args []string, argsLenAtDash 
 		o.Namespace = namespace
 	}
 
+	o.PreviewFormat = strings.ToLower(o.PreviewFormat)
+
 	return nil
 }
 
@@ -159,7 +175,15 @@ func (o *ExecOptions) Run(ctx context.Context) error {
 		return fmt.Errorf("failed to list pods: %w", err)
 	}
 
-	pod, err := fuzzyfinder.Pods(pods.Items, o.AllNamespaces)
+	var printer printers.ResourcePrinter
+	if o.Preview {
+		printer, err = o.printFlags.ToPrinter(o.PreviewFormat)
+		if err != nil {
+			return err
+		}
+	}
+
+	pod, err := fuzzyfinder.Pods(pods.Items, o.AllNamespaces, printer)
 	if err != nil {
 		return fmt.Errorf("failed to fuzzyfinder execute: %w", err)
 	}
