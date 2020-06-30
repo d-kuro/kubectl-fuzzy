@@ -9,7 +9,7 @@ import (
 
 const Version = "v1.1.0"
 
-var Revision = "development"
+var Revision = "development" //nolint:gochecknoglobals
 
 // NewCmdVersion is return version command.
 func NewCmdVersion() *cobra.Command {
