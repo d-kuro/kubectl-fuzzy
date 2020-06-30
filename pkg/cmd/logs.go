@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -12,6 +13,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
+	"k8s.io/cli-runtime/pkg/printers"
 	coreclient "k8s.io/client-go/kubernetes/typed/core/v1"
 
 	"github.com/d-kuro/kubectl-fuzzy/pkg/fuzzyfinder"
@@ -63,6 +65,7 @@ func NewCmdLogs(streams genericclioptions.IOStreams) *cobra.Command {
 // the current context on a user's KUBECONFIG.
 type LogsOptions struct {
 	configFlags *genericclioptions.ConfigFlags
+	printFlags  *genericclioptions.JSONYamlPrintFlags
 	genericclioptions.IOStreams
 
 	AllNamespaces bool
@@ -76,10 +79,14 @@ type LogsOptions struct {
 
 	PodClient coreclient.PodsGetter
 	Namespace string
+
+	Preview       bool
+	PreviewFormat string
 }
 
 // AddFlags adds a flag to the flag set.
 func (o *LogsOptions) AddFlags(flags *pflag.FlagSet) {
+	// kubectl flags
 	flags.BoolVarP(&o.AllNamespaces, "all-namespaces", "A", false,
 		"If present, list the requested object(s) across all namespaces."+
 			"Namespace in current context is ignored even if specified with --namespace.")
@@ -100,12 +107,19 @@ func (o *LogsOptions) AddFlags(flags *pflag.FlagSet) {
 			"showing all log lines otherwise 10, if a selector is provided.")
 	flags.Int64Var(&o.LimitBytes, "limit-bytes", 0,
 		"Maximum bytes of logs to return. Defaults to no limit.")
+
+	// original flags
+	flags.BoolVar(&o.Preview, "preview", false,
+		"If true, display the object YAML|JSON by preview window for fuzzy finder selector.")
+	flags.StringVar(&o.PreviewFormat, "preview-format", "yaml",
+		"Preview window output format. One of json|yaml.")
 }
 
 // NewLogsOptions provides an instance of LogsOptions with default values.
 func NewLogsOptions(streams genericclioptions.IOStreams) *LogsOptions {
 	return &LogsOptions{
 		configFlags: genericclioptions.NewConfigFlags(true),
+		printFlags:  genericclioptions.NewJSONYamlPrintFlags(),
 		IOStreams:   streams,
 	}
 }
@@ -130,6 +144,8 @@ func (o *LogsOptions) Complete(cmd *cobra.Command, args []string) error {
 		o.Namespace = namespace
 	}
 
+	o.PreviewFormat = strings.ToLower(o.PreviewFormat)
+
 	return nil
 }
 
@@ -145,7 +161,15 @@ func (o *LogsOptions) Run(ctx context.Context) error {
 		return fmt.Errorf("failed to list pods: %w", err)
 	}
 
-	pod, err := fuzzyfinder.Pods(pods.Items, o.AllNamespaces)
+	var printer printers.ResourcePrinter
+	if o.Preview {
+		printer, err = o.printFlags.ToPrinter(o.PreviewFormat)
+		if err != nil {
+			return err
+		}
+	}
+
+	pod, err := fuzzyfinder.Pods(pods.Items, o.AllNamespaces, printer)
 	if err != nil {
 		return fmt.Errorf("failed to fuzzyfinder execute: %w", err)
 	}
