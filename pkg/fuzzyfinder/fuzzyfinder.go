@@ -78,7 +78,7 @@ func Infos(infos []*resource.Info, allNamespaces bool, printer printers.Resource
 
 	idx, err := fuzzyfinder.Find(infos,
 		func(i int) string {
-			if allNamespaces {
+			if allNamespaces && len(infos[i].Namespace) >= 1 {
 				return fmt.Sprintf("%s (%s)", infos[i].Name, infos[i].Namespace)
 			}
 			return infos[i].Name
