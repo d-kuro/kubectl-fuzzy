@@ -106,7 +106,7 @@ func (o *ExecOptions) AddFlags(flags *pflag.FlagSet) {
 		"Stdin is a TTY")
 
 	// original flags
-	flags.BoolVar(&o.Preview, "preview", false,
+	flags.BoolVarP(&o.Preview, "preview", "P", false,
 		"If true, display the object YAML|JSON by preview window for fuzzy finder selector.")
 	flags.StringVar(&o.PreviewFormat, "preview-format", "yaml",
 		"Preview window output format. One of json|yaml.")
