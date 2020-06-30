@@ -109,7 +109,7 @@ func (o *LogsOptions) AddFlags(flags *pflag.FlagSet) {
 		"Maximum bytes of logs to return. Defaults to no limit.")
 
 	// original flags
-	flags.BoolVar(&o.Preview, "preview", false,
+	flags.BoolVarP(&o.Preview, "preview", "P", false,
 		"If true, display the object YAML|JSON by preview window for fuzzy finder selector.")
 	flags.StringVar(&o.PreviewFormat, "preview-format", "yaml",
 		"Preview window output format. One of json|yaml.")

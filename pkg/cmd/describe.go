@@ -91,7 +91,7 @@ func (o *DescribeOptions) AddFlags(flags *pflag.FlagSet) {
 		"If true, display events related to the described object.")
 
 	// original flags
-	flags.BoolVar(&o.Preview, "preview", false,
+	flags.BoolVarP(&o.Preview, "preview", "P", false,
 		"If true, display the object YAML|JSON by preview window for fuzzy finder selector.")
 	flags.StringVar(&o.PreviewFormat, "preview-format", "yaml",
 		"Preview window output format. One of json|yaml.")

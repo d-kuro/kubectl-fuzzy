@@ -40,6 +40,7 @@ Usage:
   kubectl-fuzzy [command]
 
 Available Commands:
+  describe    Selecting a object with the fuzzy finder and show details
   exec        Selecting a Pod with the fuzzy finder and execute a command in a container
   help        Help about any command
   logs        Selecting a Pod with the fuzzy finder and view the log
@@ -49,10 +50,25 @@ Flags:
   -h, --help   help for kubectl-fuzzy
 
 Use "kubectl-fuzzy [command] --help" for more information about a command.
+
 ```
 
-## Support
+## Support Commands
 
 * [x] `kubectl logs`
 * [x] `kubectl exec`
+* [x] `kubectl describe`
 * anything else...
+
+## Preview Mode
+
+You can use the `--preview` or `-P` option to display a YAML of the Kubernetes object in a fuzzy finder selector.
+You can switch display to YAML or JSON with the `--preview-format` option.
+
+e.g.
+
+```shell
+kubectl fuzzy describe deployment --preview
+or
+kubectl fuzzy describe deployment -P
+```
