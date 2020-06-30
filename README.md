@@ -62,6 +62,8 @@ Use "kubectl-fuzzy [command] --help" for more information about a command.
 
 ## Preview Mode
 
+![](./docs/assets/preview.jpg)
+
 You can use the `--preview` or `-P` option to display a YAML of the Kubernetes object in a fuzzy finder selector.
 You can switch display to YAML or JSON with the `--preview-format` option.
 
