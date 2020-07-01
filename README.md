@@ -2,14 +2,15 @@
 
 ![](https://github.com/d-kuro/kubectl-fuzzy/workflows/Build/badge.svg)
 
-Fuzzy Finder kubectl!
+Fuzzy and partial string search for kubectl
 
 ![](./docs/assets/kubectl-fuzzy.gif)
 
 ## Summary
 
-`kubectl-fuzzy` is a kubectl plugin providing a fuzzy finder selector.
-Uses [go-fuzzyfinder](https://github.com/ktr0731/go-fuzzyfinder), so there is no dependency on [fzf](https://github.com/junegunn/fzf) binaries or anything else.
+This tool uses [fzf(1)](https://manpages.debian.org/unstable/fzf/fzf.1.en.html)-like fuzzy-finder to do partial or fuzzy search of Kubernetes resources.
+Instead of specifying full resource names to kubectl commands,
+you can choose them from an interactive list that you can filter by typing a few characters.
 
 > 📝 Notes
 >
@@ -19,15 +20,28 @@ Uses [go-fuzzyfinder](https://github.com/ktr0731/go-fuzzyfinder), so there is no
 
 ## Install
 
+### Krew
+
+[Krew](https://krew.sigs.k8s.io/) is the plugin manager for kubectl command-line tool.
+
+> 📝 See the [documentation](https://krew.sigs.k8s.io/docs/user-guide/setup/install/) for how to install Krew.
+
+```shell
+kubectl krew update
+kubectl krew install fuzzy
+```
+
+### Manually
+
+Please download the binaries from the [release page](https://github.com/d-kuro/kubectl-fuzzy/releases).
+
+or
+
 ```shell
 git clone https://github.com/d-kuro/kubectl-fuzzy.git
 cd kubectl-fuzzy
 make install
 ```
-
-or
-
-Please download the binaries from the [release page](https://github.com/d-kuro/kubectl-fuzzy/releases).
 
 ## Usage
 
