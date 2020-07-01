@@ -74,3 +74,7 @@ kubectl fuzzy describe deployment --preview
 or
 kubectl fuzzy describe deployment -P
 ```
+
+The Kubernetes object displayed in the preview window is simplified by default.
+Some metadata and statuses have been removed.
+Use the `--raw-preview` option to display the unsimplified object.

@@ -7,10 +7,12 @@ require (
 	github.com/moby/term v0.0.0-20200611042045-63b9a826fb74
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/pflag v1.0.5
+	github.com/tidwall/sjson v1.1.1
 	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208
 	k8s.io/api v0.18.5
 	k8s.io/apimachinery v0.18.5
 	k8s.io/cli-runtime v0.18.5
 	k8s.io/client-go v0.18.5
 	k8s.io/kubectl v0.18.5
+	sigs.k8s.io/yaml v1.2.0
 )

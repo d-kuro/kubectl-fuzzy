@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -82,6 +81,7 @@ type LogsOptions struct {
 
 	Preview       bool
 	PreviewFormat string
+	RawPreview    bool
 }
 
 // AddFlags adds a flag to the flag set.
@@ -113,6 +113,8 @@ func (o *LogsOptions) AddFlags(flags *pflag.FlagSet) {
 		"If true, display the object YAML|JSON by preview window for fuzzy finder selector.")
 	flags.StringVar(&o.PreviewFormat, "preview-format", "yaml",
 		"Preview window output format. One of json|yaml.")
+	flags.BoolVar(&o.RawPreview, "raw-preview", false,
+		"If true, display the unsimplified object in the preview window. (default is simplified)")
 }
 
 // NewLogsOptions provides an instance of LogsOptions with default values.
@@ -144,8 +146,6 @@ func (o *LogsOptions) Complete(cmd *cobra.Command, args []string) error {
 		o.Namespace = namespace
 	}
 
-	o.PreviewFormat = strings.ToLower(o.PreviewFormat)
-
 	return nil
 }
 
@@ -169,7 +169,7 @@ func (o *LogsOptions) Run(ctx context.Context) error {
 		}
 	}
 
-	pod, err := fuzzyfinder.Pods(pods.Items, o.AllNamespaces, printer)
+	pod, err := fuzzyfinder.Pods(pods.Items, printer, o.AllNamespaces, o.RawPreview)
 	if err != nil {
 		return fmt.Errorf("failed to fuzzyfinder execute: %w", err)
 	}

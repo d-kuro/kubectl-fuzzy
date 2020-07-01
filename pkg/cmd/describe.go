@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -77,6 +76,7 @@ type DescribeOptions struct {
 
 	Preview       bool
 	PreviewFormat string
+	RawPreview    bool
 }
 
 // AddFlags adds a flag to the flag set.
@@ -95,6 +95,8 @@ func (o *DescribeOptions) AddFlags(flags *pflag.FlagSet) {
 		"If true, display the object YAML|JSON by preview window for fuzzy finder selector.")
 	flags.StringVar(&o.PreviewFormat, "preview-format", "yaml",
 		"Preview window output format. One of json|yaml.")
+	flags.BoolVar(&o.RawPreview, "raw-preview", false,
+		"If true, display the unsimplified object in the preview window. (default is simplified)")
 }
 
 // NewDescribeOptions provides an instance of DescribeOptions with default values.
@@ -129,8 +131,6 @@ func (o *DescribeOptions) Complete(cmd *cobra.Command, args []string) error {
 
 		o.Namespace = namespace
 	}
-
-	o.PreviewFormat = strings.ToLower(o.PreviewFormat)
 
 	return nil
 }
@@ -170,7 +170,7 @@ func (o *DescribeOptions) Run(ctx context.Context, args []string) error {
 		}
 	}
 
-	info, err := fuzzyfinder.Infos(infos, o.AllNamespaces, printer)
+	info, err := fuzzyfinder.Infos(infos, printer, o.AllNamespaces, o.RawPreview)
 	if err != nil {
 		return fmt.Errorf("failed to fuzzyfinder execute: %w", err)
 	}
