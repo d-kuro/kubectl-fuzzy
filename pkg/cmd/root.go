@@ -28,6 +28,7 @@ func AddSubCmd(cmd *cobra.Command, streams genericclioptions.IOStreams) *cobra.C
 	cmd.AddCommand(NewCmdExec(streams))
 	cmd.AddCommand(NewCmdDescribe(streams))
 	cmd.AddCommand(NewCmdVersion())
+	cmd.AddCommand(NewCmdCreateJobFrom(streams))
 
 	return cmd
 }
