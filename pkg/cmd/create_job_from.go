@@ -18,14 +18,23 @@ import (
 	"k8s.io/kubectl/pkg/scheme"
 )
 
+const (
+	exampleCreateJobFrom = `
+	# Selecting a CronJob with the fuzzy finder and create job
+	# Only supported cronjob
+	# If a jobName is omitted, generated from cronJob name
+	kubectl fuzzy create-job-from cronjob|cj [jobName] [flags]
+`
+)
+
 // NewCmdCreateJobFrom provides a cobra command wrapping CreateJobFromOptions.
 func NewCmdCreateJobFrom(streams genericclioptions.IOStreams) *cobra.Command {
 	o := NewCreateJobFromOptions(streams)
 
 	cmd := &cobra.Command{
 		Use:           "create-job-from",
-		Short:         "Selecting a Pod with the fuzzy finder and view the log",
-		Example:       "TODO",
+		Short:         "Selecting a CronJob with the fuzzy finder and create job",
+		Example:       exampleCreateJobFrom,
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(c *cobra.Command, args []string) error {
