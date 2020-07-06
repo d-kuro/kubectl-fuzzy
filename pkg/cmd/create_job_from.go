@@ -93,7 +93,6 @@ func (o *CreateJobFromOptions) AddFlags(flags *pflag.FlagSet) {
 
 // Complete sets all information required for get logs.
 func (o *CreateJobFromOptions) Complete(cmd *cobra.Command, args []string) error {
-
 	client, err := kubernetes.NewClient(o.configFlags)
 	if err != nil {
 		return fmt.Errorf("failed to new Kubernetes client: %w", err)
@@ -104,7 +103,9 @@ func (o *CreateJobFromOptions) Complete(cmd *cobra.Command, args []string) error
 	}
 
 	o.resource = args[0]
-	if len(args) >= 2 {
+
+	argHasNameLength := 2
+	if len(args) >= argHasNameLength {
 		o.name = args[1]
 	}
 
@@ -124,6 +125,7 @@ func (o *CreateJobFromOptions) Complete(cmd *cobra.Command, args []string) error
 	if err != nil {
 		return err
 	}
+
 	o.printObj = func(obj runtime.Object) error {
 		return printer.PrintObj(obj, o.Out)
 	}
@@ -136,12 +138,12 @@ func (o *CreateJobFromOptions) Validate() error {
 	if o.resource != "cronjob" && o.resource != "cj" {
 		return fmt.Errorf("resource must be cronjob and only supported cronjob")
 	}
+
 	return nil
 }
 
 // Run execute fizzy finder and create job from cronJob.
 func (o *CreateJobFromOptions) Run(ctx context.Context) error {
-
 	cronJobs, err := o.cronJobClient.CronJobs(o.namespace).List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to list cronJobs: %w", err)
@@ -156,6 +158,7 @@ func (o *CreateJobFromOptions) Run(ctx context.Context) error {
 
 	createOptions := metav1.CreateOptions{}
 	res, err := o.jobClient.Jobs(cronJob.Namespace).Create(context.Background(), job, createOptions)
+
 	if err != nil {
 		return fmt.Errorf("failed to create job: %v", err)
 	}
@@ -166,6 +169,7 @@ func (o *CreateJobFromOptions) Run(ctx context.Context) error {
 func (o *CreateJobFromOptions) createJobFromCronJob(cronJob *batchv1beta1.CronJob, name *string) *batchv1.Job {
 	annotations := make(map[string]string)
 	annotations["cronjob.kubernetes.io/instantiate"] = "manual"
+
 	for k, v := range cronJob.Spec.JobTemplate.Annotations {
 		annotations[k] = v
 	}
@@ -191,5 +195,6 @@ func (o *CreateJobFromOptions) createJobFromCronJob(cronJob *batchv1beta1.CronJo
 	if name != nil {
 		job.ObjectMeta.Name = *name
 	}
+
 	return job
 }

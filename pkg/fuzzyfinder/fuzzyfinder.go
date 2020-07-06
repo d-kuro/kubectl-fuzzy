@@ -211,7 +211,7 @@ func multipleGVKsRequested(infos []*resource.Info) bool {
 	return false
 }
 
-// CronJobs return a cronjob after fuzzyfinder
+// CronJobs return a cronjob after fuzzyfinder.
 func CronJobs(cronJobs []batchv1beta1.CronJob) (batchv1beta1.CronJob, error) {
 	var opts []fuzzyfinder.Option
 	opts = append(opts, cronJobPreviewWindow(cronJobs))
