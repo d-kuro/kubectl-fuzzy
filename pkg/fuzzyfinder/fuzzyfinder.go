@@ -105,12 +105,23 @@ func Infos(infos []*resource.Info, printer printers.ResourcePrinter, allNs bool,
 		}
 	}
 
+	printWithKind := multipleGVKsRequested(infos)
+
 	idx, err := fuzzyfinder.Find(infos,
 		func(i int) string {
-			if allNs && len(infos[i].Namespace) >= 1 {
-				return fmt.Sprintf("%s (%s)", infos[i].Name, infos[i].Namespace)
+			var b strings.Builder
+
+			if printWithKind {
+				fmt.Fprintf(&b, "%s/", strings.ToLower(infos[i].Mapping.GroupVersionKind.GroupKind().String()))
 			}
-			return infos[i].Name
+
+			fmt.Fprintf(&b, infos[i].Name)
+
+			if allNs && len(infos[i].Namespace) >= 1 {
+				fmt.Fprintf(&b, " (%s)", infos[i].Namespace)
+			}
+
+			return b.String()
 		},
 		opts...,
 	)
@@ -178,4 +189,20 @@ func convert(jsonObj []byte, printer printers.ResourcePrinter) (string, error) {
 	default:
 		return "", fmt.Errorf("unsupported printer type: %T", printer)
 	}
+}
+
+func multipleGVKsRequested(infos []*resource.Info) bool {
+	if len(infos) < 2 {
+		return false
+	}
+
+	gvk := infos[0].Mapping.GroupVersionKind
+
+	for _, info := range infos {
+		if info.Mapping.GroupVersionKind != gvk {
+			return true
+		}
+	}
+
+	return false
 }

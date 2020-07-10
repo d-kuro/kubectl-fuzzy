@@ -148,8 +148,6 @@ func (o *DescribeOptions) Run(ctx context.Context, args []string) error {
 		NamespaceParam(o.Namespace).DefaultNamespace().AllNamespaces(o.AllNamespaces).
 		LabelSelectorParam(o.Selector).
 		ResourceTypeOrNameArgs(true, o.BuilderArgs...).
-		//nolint:godox
-		SingleResourceType(). // TODO: Support multi resource type
 		Flatten().
 		Do()
 

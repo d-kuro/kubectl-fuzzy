@@ -5,3 +5,5 @@ linters:
   disable:
     - goerr113
     - maligned
+    - gofumpt
+    - gomnd
