@@ -195,10 +195,10 @@ func (o *CreateJobOptions) Run(ctx context.Context) error {
 	}
 
 	job := o.createJobFromCronJob(cj, &o.name)
-	res, err := o.jobClient.Jobs(cj.Namespace).Create(context.Background(), job, metav1.CreateOptions{})
 
+	res, err := o.jobClient.Jobs(cj.Namespace).Create(context.Background(), job, metav1.CreateOptions{})
 	if err != nil {
-		return fmt.Errorf("failed to create job: %v", err)
+		return fmt.Errorf("failed to create job: %w", err)
 	}
 
 	return o.printObj(res)
