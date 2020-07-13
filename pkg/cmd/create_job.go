@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/d-kuro/kubectl-fuzzy/pkg/fuzzyfinder"
@@ -14,8 +15,8 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/cli-runtime/pkg/printers"
+	"k8s.io/cli-runtime/pkg/resource"
 	batchv1client "k8s.io/client-go/kubernetes/typed/batch/v1"
-	batchv1beta1client "k8s.io/client-go/kubernetes/typed/batch/v1beta1"
 	"k8s.io/kubectl/pkg/scheme"
 )
 
@@ -75,9 +76,9 @@ type CreateJobOptions struct {
 	name string
 	from string
 
-	cronJobClient batchv1beta1client.CronJobsGetter
-	jobClient     batchv1client.JobsGetter
-	namespace     string
+	Builder   *resource.Builder
+	jobClient batchv1client.JobsGetter
+	namespace string
 
 	Preview       bool
 	PreviewFormat string
@@ -115,19 +116,19 @@ func (o *CreateJobOptions) Complete(cmd *cobra.Command, args []string) error {
 	}
 
 	if o.from == "" {
-		return fmt.Errorf("--from option is required, only supported job from cronjob")
+		return errors.New("--from option is required, only supported job from cronjob")
 	}
 
 	if o.from != "cronjob" {
-		return fmt.Errorf("must specify resource, only supported job")
+		return errors.New("must specify resource, only supported cronjob")
 	}
 
 	if len(args) >= 1 {
 		o.name = args[0]
 	}
 
-	o.cronJobClient = client.BatchV1beta1()
 	o.jobClient = client.BatchV1()
+	o.Builder = resource.NewBuilder(o.configFlags)
 
 	kubeConfig := o.configFlags.ToRawKubeConfigLoader()
 
@@ -157,7 +158,15 @@ func (o *CreateJobOptions) Validate() error {
 
 // Run execute fizzy finder and create job from cronJob.
 func (o *CreateJobOptions) Run(ctx context.Context) error {
-	cronJobs, err := o.cronJobClient.CronJobs(o.namespace).List(ctx, metav1.ListOptions{})
+	infos, err := o.Builder.
+		Unstructured().
+		NamespaceParam(o.namespace).DefaultNamespace().
+		ResourceTypes(o.from).
+		SelectAllParam(true).
+		Flatten().
+		Latest().
+		Do().
+		Infos()
 	if err != nil {
 		return fmt.Errorf("failed to list cronJobs: %w", err)
 	}
@@ -170,15 +179,23 @@ func (o *CreateJobOptions) Run(ctx context.Context) error {
 		}
 	}
 
-	cronJob, err := fuzzyfinder.CronJobs(cronJobs.Items, printer, o.RawPreview)
+	info, err := fuzzyfinder.Infos(infos, printer, false, o.RawPreview)
 	if err != nil {
 		return fmt.Errorf("failed to fuzzyfinder execute: %w", err)
 	}
 
-	job := o.createJobFromCronJob(&cronJob, &o.name)
+	uncastVersionedObj, err := scheme.Scheme.ConvertToVersion(info.Object, batchv1beta1.SchemeGroupVersion)
+	if err != nil {
+		return fmt.Errorf("failed to convert resource into cronjob: %w", err)
+	}
 
-	createOptions := metav1.CreateOptions{}
-	res, err := o.jobClient.Jobs(cronJob.Namespace).Create(context.Background(), job, createOptions)
+	cj, ok := uncastVersionedObj.(*batchv1beta1.CronJob)
+	if !ok {
+		return errors.New("failed to cast cronjob")
+	}
+
+	job := o.createJobFromCronJob(cj, &o.name)
+	res, err := o.jobClient.Jobs(cj.Namespace).Create(context.Background(), job, metav1.CreateOptions{})
 
 	if err != nil {
 		return fmt.Errorf("failed to create job: %v", err)

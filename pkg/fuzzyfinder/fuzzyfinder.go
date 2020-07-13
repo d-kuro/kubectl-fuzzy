@@ -7,7 +7,6 @@ import (
 
 	"github.com/ktr0731/go-fuzzyfinder"
 
-	batchv1beta1 "k8s.io/api/batch/v1beta1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/cli-runtime/pkg/printers"
@@ -206,70 +205,4 @@ func multipleGVKsRequested(infos []*resource.Info) bool {
 	}
 
 	return false
-}
-
-func rawCronJobPreviewWindow(cronJobs []batchv1beta1.CronJob, printer printers.ResourcePrinter) fuzzyfinder.Option {
-	gvk := schema.GroupVersionKind{Kind: "Pod", Version: "v1"}
-
-	return fuzzyfinder.WithPreviewWindow(func(i, w, h int) string {
-		if i >= 0 {
-			buf := &bytes.Buffer{}
-			cronJobs[i].GetObjectKind().SetGroupVersionKind(gvk)
-			if err := printer.PrintObj(&cronJobs[i], buf); err != nil {
-				return fmt.Sprintf("error: %s", err)
-			}
-			return strings.TrimPrefix(buf.String(), "---\n")
-		}
-		return ""
-	})
-}
-
-func cronjobPreviewWindow(cronJobs []batchv1beta1.CronJob, printer printers.ResourcePrinter) fuzzyfinder.Option {
-	gvk := schema.GroupVersionKind{Group: "batch", Version: "v1beta1", Kind: "CronJob"}
-	jsonPrinter := &printers.JSONPrinter{}
-
-	return fuzzyfinder.WithPreviewWindow(func(i, w, h int) string {
-		if i >= 0 {
-			buf := &bytes.Buffer{}
-			cronJobs[i].GetObjectKind().SetGroupVersionKind(gvk)
-			if err := jsonPrinter.PrintObj(&cronJobs[i], buf); err != nil {
-				return fmt.Sprintf("error: %s", err)
-			}
-
-			simplified, err := simplifyObject(buf.String(), printer)
-			if err != nil {
-				return fmt.Sprintf("error: %s", err)
-			}
-
-			return simplified
-		}
-		return ""
-	})
-}
-
-// CronJobs return a cronjob after fuzzyfinder.
-func CronJobs(
-	cronJobs []batchv1beta1.CronJob,
-	printer printers.ResourcePrinter, raw bool) (batchv1beta1.CronJob, error) {
-	var opts []fuzzyfinder.Option
-
-	if printer != nil {
-		if raw {
-			opts = append(opts, rawCronJobPreviewWindow(cronJobs, printer))
-		} else {
-			opts = append(opts, cronjobPreviewWindow(cronJobs, printer))
-		}
-	}
-
-	idx, err := fuzzyfinder.Find(cronJobs,
-		func(i int) string {
-			return cronJobs[i].Name
-		},
-		opts...,
-	)
-	if err != nil {
-		return batchv1beta1.CronJob{}, err
-	}
-
-	return cronJobs[idx], nil
 }
