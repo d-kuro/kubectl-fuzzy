@@ -19,22 +19,22 @@ import (
 )
 
 const (
-	exampleCreateJobFrom = `
+	exampleCreateJob = `
 	# Selecting a CronJob with the fuzzy finder and create job
 	# Only supported cronjob
 	# If a jobName is omitted, generated from cronJob name
-	kubectl fuzzy create-job-from cronjob|cj [jobName] [flags]
+	kubectl fuzzy create job [jobName] --from=cronjob [flags]
 `
 )
 
-// NewCmdCreateJobFrom provides a cobra command wrapping CreateJobFromOptions.
-func NewCmdCreateJobFrom(streams genericclioptions.IOStreams) *cobra.Command {
-	o := NewCreateJobFromOptions(streams)
+// NewCmdCreateJob provides a cobra command wrapping CreateJobOptions.
+func NewCmdCreateJob(streams genericclioptions.IOStreams) *cobra.Command {
+	o := NewCreateJobOptions(streams)
 
 	cmd := &cobra.Command{
-		Use:           "create-job-from",
+		Use:           "job [NAME] --from=cronjob",
 		Short:         "Selecting a CronJob with the fuzzy finder and create job",
-		Example:       exampleCreateJobFrom,
+		Example:       exampleCreateJob,
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(c *cobra.Command, args []string) error {
@@ -61,26 +61,26 @@ func NewCmdCreateJobFrom(streams genericclioptions.IOStreams) *cobra.Command {
 	return cmd
 }
 
-// CreateJobFromOptions provides information required to update
+// CreateJobOptions provides information required to update
 // the current context on a user's KUBECONFIG.
-type CreateJobFromOptions struct {
+type CreateJobOptions struct {
 	configFlags *genericclioptions.ConfigFlags
 	printFlags  *genericclioptions.PrintFlags
 	genericclioptions.IOStreams
 
 	printObj func(obj runtime.Object) error
 
-	resource string
-	name     string
+	name string
+	from string
 
 	cronJobClient batchv1beta1client.CronJobsGetter
 	jobClient     batchv1client.JobsGetter
 	namespace     string
 }
 
-// NewCreateJobFromOptions provides an instance of CreateJobFromOptions with default values.
-func NewCreateJobFromOptions(streams genericclioptions.IOStreams) *CreateJobFromOptions {
-	return &CreateJobFromOptions{
+// NewCreateJobOptions provides an instance of CreateJobOptions with default values.
+func NewCreateJobOptions(streams genericclioptions.IOStreams) *CreateJobOptions {
+	return &CreateJobOptions{
 		configFlags: genericclioptions.NewConfigFlags(true),
 		printFlags:  genericclioptions.NewPrintFlags("created").WithTypeSetter(scheme.Scheme),
 		IOStreams:   streams,
@@ -88,25 +88,27 @@ func NewCreateJobFromOptions(streams genericclioptions.IOStreams) *CreateJobFrom
 }
 
 // AddFlags adds a flag to the flag set.
-func (o *CreateJobFromOptions) AddFlags(flags *pflag.FlagSet) {
+func (o *CreateJobOptions) AddFlags(flags *pflag.FlagSet) {
+	flags.StringVar(&o.from, "from", o.from, "The name of the resource to create a Job from (only cronjob is supported).")
 }
 
 // Complete sets all information required for get logs.
-func (o *CreateJobFromOptions) Complete(cmd *cobra.Command, args []string) error {
+func (o *CreateJobOptions) Complete(cmd *cobra.Command, args []string) error {
 	client, err := kubernetes.NewClient(o.configFlags)
 	if err != nil {
 		return fmt.Errorf("failed to new Kubernetes client: %w", err)
 	}
 
-	if len(args) == 0 {
-		return fmt.Errorf("resource must specify and only supported cronjob")
+	if o.from == "" {
+		return fmt.Errorf("--from=cronjob option is required, only supported create job from cronjob")
 	}
 
-	o.resource = args[0]
+	if o.from != "cronjob" {
+		return fmt.Errorf("must specify resource, only supported job")
+	}
 
-	argHasNameLength := 2
-	if len(args) >= argHasNameLength {
-		o.name = args[1]
+	if len(args) >= 1 {
+		o.name = args[0]
 	}
 
 	o.cronJobClient = client.BatchV1beta1()
@@ -134,16 +136,12 @@ func (o *CreateJobFromOptions) Complete(cmd *cobra.Command, args []string) error
 }
 
 // Validate ensures that all required arguments and flag values are provided.
-func (o *CreateJobFromOptions) Validate() error {
-	if o.resource != "cronjob" && o.resource != "cj" {
-		return fmt.Errorf("resource must be cronjob and only supported cronjob")
-	}
-
+func (o *CreateJobOptions) Validate() error {
 	return nil
 }
 
 // Run execute fizzy finder and create job from cronJob.
-func (o *CreateJobFromOptions) Run(ctx context.Context) error {
+func (o *CreateJobOptions) Run(ctx context.Context) error {
 	cronJobs, err := o.cronJobClient.CronJobs(o.namespace).List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to list cronJobs: %w", err)
@@ -166,7 +164,7 @@ func (o *CreateJobFromOptions) Run(ctx context.Context) error {
 	return o.printObj(res)
 }
 
-func (o *CreateJobFromOptions) createJobFromCronJob(cronJob *batchv1beta1.CronJob, name *string) *batchv1.Job {
+func (o *CreateJobOptions) createJobFromCronJob(cronJob *batchv1beta1.CronJob, name *string) *batchv1.Job {
 	annotations := make(map[string]string)
 	annotations["cronjob.kubernetes.io/instantiate"] = "manual"
 
