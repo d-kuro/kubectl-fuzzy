@@ -1,5 +1,9 @@
 # Support Commands
 
+* [kubectl describe](#describe)
+* [kubectl logs](#logs)
+* [kubectl exec](#exec)
+
 ## Describe
 
 Compatibility commands with `kubectl describe`.
