@@ -4,15 +4,12 @@ import (
 	"bytes"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/ktr0731/go-fuzzyfinder"
 
 	batchv1beta1 "k8s.io/api/batch/v1beta1"
 	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
-	"k8s.io/apimachinery/pkg/util/duration"
 	"k8s.io/cli-runtime/pkg/printers"
 	"k8s.io/cli-runtime/pkg/resource"
 	"sigs.k8s.io/yaml"
@@ -211,10 +208,58 @@ func multipleGVKsRequested(infos []*resource.Info) bool {
 	return false
 }
 
+func rawCronJobPreviewWindow(cronJobs []batchv1beta1.CronJob, printer printers.ResourcePrinter) fuzzyfinder.Option {
+	gvk := schema.GroupVersionKind{Kind: "Pod", Version: "v1"}
+
+	return fuzzyfinder.WithPreviewWindow(func(i, w, h int) string {
+		if i >= 0 {
+			buf := &bytes.Buffer{}
+			cronJobs[i].GetObjectKind().SetGroupVersionKind(gvk)
+			if err := printer.PrintObj(&cronJobs[i], buf); err != nil {
+				return fmt.Sprintf("error: %s", err)
+			}
+			return strings.TrimPrefix(buf.String(), "---\n")
+		}
+		return ""
+	})
+}
+
+func cronjobPreviewWindow(cronJobs []batchv1beta1.CronJob, printer printers.ResourcePrinter) fuzzyfinder.Option {
+	gvk := schema.GroupVersionKind{Group: "batch", Version: "v1beta1", Kind: "CronJob"}
+	jsonPrinter := &printers.JSONPrinter{}
+
+	return fuzzyfinder.WithPreviewWindow(func(i, w, h int) string {
+		if i >= 0 {
+			buf := &bytes.Buffer{}
+			cronJobs[i].GetObjectKind().SetGroupVersionKind(gvk)
+			if err := jsonPrinter.PrintObj(&cronJobs[i], buf); err != nil {
+				return fmt.Sprintf("error: %s", err)
+			}
+
+			simplified, err := simplifyObject(buf.String(), printer)
+			if err != nil {
+				return fmt.Sprintf("error: %s", err)
+			}
+
+			return simplified
+		}
+		return ""
+	})
+}
+
 // CronJobs return a cronjob after fuzzyfinder.
-func CronJobs(cronJobs []batchv1beta1.CronJob) (batchv1beta1.CronJob, error) {
+func CronJobs(
+	cronJobs []batchv1beta1.CronJob,
+	printer printers.ResourcePrinter, raw bool) (batchv1beta1.CronJob, error) {
 	var opts []fuzzyfinder.Option
-	opts = append(opts, cronJobPreviewWindow(cronJobs))
+
+	if printer != nil {
+		if raw {
+			opts = append(opts, rawCronJobPreviewWindow(cronJobs, printer))
+		} else {
+			opts = append(opts, cronjobPreviewWindow(cronJobs, printer))
+		}
+	}
 
 	idx, err := fuzzyfinder.Find(cronJobs,
 		func(i int) string {
@@ -227,36 +272,4 @@ func CronJobs(cronJobs []batchv1beta1.CronJob) (batchv1beta1.CronJob, error) {
 	}
 
 	return cronJobs[idx], nil
-}
-
-func cronJobPreviewWindow(cronJobs []batchv1beta1.CronJob) fuzzyfinder.Option {
-	return fuzzyfinder.WithPreviewWindow(func(i, w, h int) string {
-		if i >= 0 {
-			cj := cronJobs[i]
-			lastScheduleTime := "<none>"
-			if cj.Status.LastScheduleTime != nil {
-				lastScheduleTime = translateTimestampSince(*cj.Status.LastScheduleTime)
-			}
-			return fmt.Sprintf(
-				"%s\n\nSCHEDULE: %s\nSUPEND: %v\nACTIVE: %d\nLAST SCHEDULE: %s\nAGE: %s",
-				cj.Name,
-				cj.Spec.Schedule,
-				*cj.Spec.Suspend,
-				len(cj.Status.Active),
-				lastScheduleTime,
-				translateTimestampSince(cj.CreationTimestamp),
-			)
-		}
-		return ""
-	})
-}
-
-// translateTimestampSince returns the elapsed time since timestamp in
-// human-readable approximation.
-func translateTimestampSince(timestamp metav1.Time) string {
-	if timestamp.IsZero() {
-		return "<unknown>"
-	}
-
-	return duration.HumanDuration(time.Since(timestamp.Time))
 }

@@ -13,6 +13,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
+	"k8s.io/cli-runtime/pkg/printers"
 	batchv1client "k8s.io/client-go/kubernetes/typed/batch/v1"
 	batchv1beta1client "k8s.io/client-go/kubernetes/typed/batch/v1beta1"
 	"k8s.io/kubectl/pkg/scheme"
@@ -64,8 +65,9 @@ func NewCmdCreateJob(streams genericclioptions.IOStreams) *cobra.Command {
 // CreateJobOptions provides information required to update
 // the current context on a user's KUBECONFIG.
 type CreateJobOptions struct {
-	configFlags *genericclioptions.ConfigFlags
-	printFlags  *genericclioptions.PrintFlags
+	configFlags       *genericclioptions.ConfigFlags
+	previewPrintFlags *genericclioptions.JSONYamlPrintFlags
+	printFlags        *genericclioptions.PrintFlags
 	genericclioptions.IOStreams
 
 	printObj func(obj runtime.Object) error
@@ -76,20 +78,33 @@ type CreateJobOptions struct {
 	cronJobClient batchv1beta1client.CronJobsGetter
 	jobClient     batchv1client.JobsGetter
 	namespace     string
+
+	Preview       bool
+	PreviewFormat string
+	RawPreview    bool
 }
 
 // NewCreateJobOptions provides an instance of CreateJobOptions with default values.
 func NewCreateJobOptions(streams genericclioptions.IOStreams) *CreateJobOptions {
 	return &CreateJobOptions{
-		configFlags: genericclioptions.NewConfigFlags(true),
-		printFlags:  genericclioptions.NewPrintFlags("created").WithTypeSetter(scheme.Scheme),
-		IOStreams:   streams,
+		configFlags:       genericclioptions.NewConfigFlags(true),
+		previewPrintFlags: genericclioptions.NewJSONYamlPrintFlags(),
+		printFlags:        genericclioptions.NewPrintFlags("created").WithTypeSetter(scheme.Scheme),
+		IOStreams:         streams,
 	}
 }
 
 // AddFlags adds a flag to the flag set.
 func (o *CreateJobOptions) AddFlags(flags *pflag.FlagSet) {
 	flags.StringVar(&o.from, "from", o.from, "The name of the resource to create a Job from (only cronjob is supported).")
+
+	// original flags
+	flags.BoolVarP(&o.Preview, "preview", "P", false,
+		"If true, display the object YAML|JSON by preview window for fuzzy finder selector.")
+	flags.StringVar(&o.PreviewFormat, "preview-format", "yaml",
+		"Preview window output format. One of json|yaml.")
+	flags.BoolVar(&o.RawPreview, "raw-preview", false,
+		"If true, display the unsimplified object in the preview window. (default is simplified)")
 }
 
 // Complete sets all information required for get logs.
@@ -147,7 +162,15 @@ func (o *CreateJobOptions) Run(ctx context.Context) error {
 		return fmt.Errorf("failed to list cronJobs: %w", err)
 	}
 
-	cronJob, err := fuzzyfinder.CronJobs(cronJobs.Items)
+	var printer printers.ResourcePrinter
+	if o.Preview {
+		printer, err = o.previewPrintFlags.ToPrinter(o.PreviewFormat)
+		if err != nil {
+			return err
+		}
+	}
+
+	cronJob, err := fuzzyfinder.CronJobs(cronJobs.Items, printer, o.RawPreview)
 	if err != nil {
 		return fmt.Errorf("failed to fuzzyfinder execute: %w", err)
 	}
