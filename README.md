@@ -74,6 +74,8 @@ Use "kubectl-fuzzy [command] --help" for more information about a command.
 * [x] `kubectl describe`
 * anything else...
 
+> 📝 See the [documentation](./docs/commands.md) for support commands.
+
 ## Preview Mode
 
 ![](./docs/assets/preview.jpg)
