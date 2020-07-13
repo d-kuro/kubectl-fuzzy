@@ -100,7 +100,7 @@ func (o *CreateJobOptions) Complete(cmd *cobra.Command, args []string) error {
 	}
 
 	if o.from == "" {
-		return fmt.Errorf("--from=cronjob option is required, only supported create job from cronjob")
+		return fmt.Errorf("--from option is required, only supported job from cronjob")
 	}
 
 	if o.from != "cronjob" {
