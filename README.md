@@ -54,6 +54,7 @@ Usage:
   kubectl-fuzzy [command]
 
 Available Commands:
+  create      Create a resource
   describe    Selecting a object with the fuzzy finder and show details
   exec        Selecting a Pod with the fuzzy finder and execute a command in a container
   help        Help about any command
@@ -64,7 +65,6 @@ Flags:
   -h, --help   help for kubectl-fuzzy
 
 Use "kubectl-fuzzy [command] --help" for more information about a command.
-
 ```
 
 ## Support Commands
@@ -72,6 +72,7 @@ Use "kubectl-fuzzy [command] --help" for more information about a command.
 * [x] `kubectl logs`
 * [x] `kubectl exec`
 * [x] `kubectl describe`
+* [x] `kubectl create job --from=cronjob`
 * anything else...
 
 > 📝 See the [documentation](./docs/commands.md) for support commands.
