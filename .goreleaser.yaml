@@ -19,7 +19,6 @@ archives:
 snapshot:
   name_template: master
 changelog:
-  sort: asc
   filters:
     exclude:
       - "Merge pull request"
