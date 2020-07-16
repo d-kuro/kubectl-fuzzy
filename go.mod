@@ -9,10 +9,10 @@ require (
 	github.com/spf13/pflag v1.0.5
 	github.com/tidwall/sjson v1.1.1
 	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208
-	k8s.io/api v0.18.5
-	k8s.io/apimachinery v0.18.5
-	k8s.io/cli-runtime v0.18.5
-	k8s.io/client-go v0.18.5
+	k8s.io/api v0.18.6
+	k8s.io/apimachinery v0.18.6
+	k8s.io/cli-runtime v0.18.6
+	k8s.io/client-go v0.18.6
 	k8s.io/kubectl v0.18.5
 	sigs.k8s.io/yaml v1.2.0
 )
