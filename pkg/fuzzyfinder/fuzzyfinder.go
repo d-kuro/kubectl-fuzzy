@@ -8,7 +8,6 @@ import (
 	"github.com/ktr0731/go-fuzzyfinder"
 
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/cli-runtime/pkg/printers"
 	"k8s.io/cli-runtime/pkg/resource"
 	"sigs.k8s.io/yaml"
@@ -47,91 +46,6 @@ func WithRawPreview(rawPreview bool) Option {
 	return func(o *opt) {
 		o.rawPreview = rawPreview
 	}
-}
-
-// Pods will start a fuzzy finder based on the received pods and returns the selected pod.
-func Pods(pods []corev1.Pod, opts ...Option) (corev1.Pod, error) {
-	var opt opt
-
-	for _, o := range opts {
-		o(&opt)
-	}
-
-	var finderOpts []fuzzyfinder.Option
-
-	if opt.printer != nil {
-		if opt.rawPreview {
-			finderOpts = append(finderOpts, rawPodPreviewWindow(pods, opt.printer))
-		} else {
-			finderOpts = append(finderOpts, podPreviewWindow(pods, opt.printer))
-		}
-	}
-
-	idx, err := fuzzyfinder.Find(pods,
-		func(i int) string {
-			if opt.allNamespaces {
-				return fmt.Sprintf("%s (%s)", pods[i].Name, pods[i].Namespace)
-			}
-			return pods[i].Name
-		},
-		finderOpts...,
-	)
-	if err != nil {
-		return corev1.Pod{}, err
-	}
-
-	return pods[idx], nil
-}
-
-func rawPodPreviewWindow(pods []corev1.Pod, printer printers.ResourcePrinter) fuzzyfinder.Option {
-	gvk := schema.GroupVersionKind{Kind: "Pod", Version: "v1"}
-
-	return fuzzyfinder.WithPreviewWindow(func(i, w, h int) string {
-		if i >= 0 {
-			buf := &bytes.Buffer{}
-			pods[i].GetObjectKind().SetGroupVersionKind(gvk)
-			if err := printer.PrintObj(&pods[i], buf); err != nil {
-				return fmt.Sprintf("error: %s", err)
-			}
-			return strings.TrimPrefix(buf.String(), "---\n")
-		}
-		return ""
-	})
-}
-
-func podPreviewWindow(pods []corev1.Pod, printer printers.ResourcePrinter) fuzzyfinder.Option {
-	gvk := schema.GroupVersionKind{Kind: "Pod", Version: "v1"}
-	jsonPrinter := &printers.JSONPrinter{}
-
-	return fuzzyfinder.WithPreviewWindow(func(i, w, h int) string {
-		if i >= 0 {
-			buf := &bytes.Buffer{}
-			pods[i].GetObjectKind().SetGroupVersionKind(gvk)
-			if err := jsonPrinter.PrintObj(&pods[i], buf); err != nil {
-				return fmt.Sprintf("error: %s", err)
-			}
-
-			simplified, err := simplifyObject(buf.String(), printer)
-			if err != nil {
-				return fmt.Sprintf("error: %s", err)
-			}
-
-			return simplified
-		}
-		return ""
-	})
-}
-
-func Containers(containers []corev1.Container) (corev1.Container, error) {
-	idx, err := fuzzyfinder.Find(containers,
-		func(i int) string {
-			return containers[i].Name
-		})
-	if err != nil {
-		return corev1.Container{}, err
-	}
-
-	return containers[idx], nil
 }
 
 // Infos will start a fuzzy finder based on the received infos and returns the selected info.
@@ -177,6 +91,18 @@ func Infos(infos []*resource.Info, opts ...Option) (*resource.Info, error) {
 	}
 
 	return infos[idx], nil
+}
+
+func Containers(containers []corev1.Container) (corev1.Container, error) {
+	idx, err := fuzzyfinder.Find(containers,
+		func(i int) string {
+			return containers[i].Name
+		})
+	if err != nil {
+		return corev1.Container{}, err
+	}
+
+	return containers[idx], nil
 }
 
 func rawInfoPreviewWindow(infos []*resource.Info, printer printers.ResourcePrinter) fuzzyfinder.Option {
