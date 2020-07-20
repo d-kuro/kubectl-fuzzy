@@ -221,8 +221,8 @@ Usage:
 
 Examples:
 
-        # Selecting a Pod with the fuzzy finder and execute a command in a container
-        kubectl fuzzy exec [flags] -- COMMAND [args...]
+	# Selecting a Pod with the fuzzy finder and execute a command in a container
+	kubectl fuzzy exec [flags] -- COMMAND [args...]
 
 
 Flags:
@@ -243,6 +243,7 @@ Flags:
       --preview-format string          Preview window output format. One of json|yaml. (default "yaml")
       --raw-preview                    If true, display the unsimplified object in the preview window. (default is simplified)
       --request-timeout string         The length of time to wait before giving up on a single server request. Non-zero values should contain a corresponding time unit (e.g. 1s, 2m, 3h). A value of zero means don't timeout requests. (default "0")
+  -l, --selector string                Selector (label query) to filter on, supports '=', '==', and '!='.(e.g. -l key1=value1,key2=value2)
   -s, --server string                  The address and port of the Kubernetes API server
   -i, --stdin                          Pass stdin to the container
       --tls-server-name string         Server name to use for server certificate validation. If it is not provided, the hostname used to contact the server is used

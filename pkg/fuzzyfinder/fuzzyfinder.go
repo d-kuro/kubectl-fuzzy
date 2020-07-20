@@ -192,7 +192,7 @@ func convert(jsonObj []byte, printer printers.ResourcePrinter) (string, error) {
 }
 
 func multipleGVKsRequested(infos []*resource.Info) bool {
-	if len(infos) < 2 {
+	if len(infos) < 2 { //nolint:gomnd
 		return false
 	}
 

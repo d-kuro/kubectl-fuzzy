@@ -27,7 +27,7 @@ func Transform(jsonObj string) (string, error) {
 	return jsonObj, nil
 }
 
-func metadata(in string) (string, error) { //nolint:funlen
+func metadata(in string) (string, error) {
 	in, err := sjson.Delete(in, `metadata.annotations.kubectl\.kubernetes\.io/last-applied-configuration`)
 	if err != nil {
 		return in, fmt.Errorf("failed to remove kubectl.kubernetes.io/last-applied-configuration: %w", err)
