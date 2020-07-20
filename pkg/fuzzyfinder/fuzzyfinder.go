@@ -16,25 +16,65 @@ import (
 	"github.com/d-kuro/kubectl-fuzzy/pkg/kubernetes/simplify"
 )
 
-func Pods(pods []corev1.Pod, printer printers.ResourcePrinter, allNs bool, raw bool) (corev1.Pod, error) {
-	var opts []fuzzyfinder.Option
+// Option represents available fuzzy-finding options.
+type Option func(*opt)
 
-	if printer != nil {
-		if raw {
-			opts = append(opts, rawPodPreviewWindow(pods, printer))
+type opt struct {
+	allNamespaces bool
+	printer       printers.ResourcePrinter
+	rawPreview    bool
+}
+
+// WithAllNamespaces specifies whether to display the namespace during fuzzy-finding.
+// Default is false.
+func WithAllNamespaces(allNamespace bool) Option {
+	return func(o *opt) {
+		o.allNamespaces = allNamespace
+	}
+}
+
+// WithPreview specifies whether to show a preview during fuzzy-finding.
+// The output of the preview is done using the ResourcePrinter.
+func WithPreview(printer printers.ResourcePrinter) Option {
+	return func(o *opt) {
+		o.printer = printer
+	}
+}
+
+// WithRawPreview specifies whether an unsimplified object should be displayed in the fuzzy-finding preview.
+// Default is false.
+func WithRawPreview(rawPreview bool) Option {
+	return func(o *opt) {
+		o.rawPreview = rawPreview
+	}
+}
+
+// Pods will start a fuzzy finder based on the received pods and returns the selected pod.
+func Pods(pods []corev1.Pod, opts ...Option) (corev1.Pod, error) {
+	var opt opt
+
+	for _, o := range opts {
+		o(&opt)
+	}
+
+	var finderOpts []fuzzyfinder.Option
+
+	if opt.printer != nil {
+		if opt.rawPreview {
+			finderOpts = append(finderOpts, rawPodPreviewWindow(pods, opt.printer))
 		} else {
-			opts = append(opts, podPreviewWindow(pods, printer))
+			finderOpts = append(finderOpts, podPreviewWindow(pods, opt.printer))
 		}
 	}
 
 	idx, err := fuzzyfinder.Find(pods,
 		func(i int) string {
-			if allNs {
+			if opt.allNamespaces {
 				return fmt.Sprintf("%s (%s)", pods[i].Name, pods[i].Namespace)
 			}
 			return pods[i].Name
 		},
-		opts...,
+		finderOpts...,
 	)
 	if err != nil {
 		return corev1.Pod{}, err
@@ -94,14 +134,21 @@ func Containers(containers []corev1.Container) (corev1.Container, error) {
 	return containers[idx], nil
 }
 
-func Infos(infos []*resource.Info, printer printers.ResourcePrinter, allNs bool, raw bool) (*resource.Info, error) {
-	var opts []fuzzyfinder.Option
+// Infos will start a fuzzy finder based on the received infos and returns the selected info.
+func Infos(infos []*resource.Info, opts ...Option) (*resource.Info, error) {
+	var opt opt
 
-	if printer != nil {
-		if raw {
-			opts = append(opts, rawInfoPreviewWindow(infos, printer))
+	for _, o := range opts {
+		o(&opt)
+	}
+
+	var finderOpts []fuzzyfinder.Option
+
+	if opt.printer != nil {
+		if opt.rawPreview {
+			finderOpts = append(finderOpts, rawInfoPreviewWindow(infos, opt.printer))
 		} else {
-			opts = append(opts, infoPreviewWindow(infos, printer))
+			finderOpts = append(finderOpts, infoPreviewWindow(infos, opt.printer))
 		}
 	}
 
@@ -117,13 +164,13 @@ func Infos(infos []*resource.Info, printer printers.ResourcePrinter, allNs bool,
 
 			fmt.Fprintf(&b, infos[i].Name)
 
-			if allNs && len(infos[i].Namespace) >= 1 {
+			if opt.allNamespaces && len(infos[i].Namespace) >= 1 {
 				fmt.Fprintf(&b, " (%s)", infos[i].Namespace)
 			}
 
 			return b.String()
 		},
-		opts...,
+		finderOpts...,
 	)
 	if err != nil {
 		return nil, err

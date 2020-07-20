@@ -169,7 +169,10 @@ func (o *LogsOptions) Run(ctx context.Context) error {
 		}
 	}
 
-	pod, err := fuzzyfinder.Pods(pods.Items, printer, o.allNamespaces, o.rawPreview)
+	pod, err := fuzzyfinder.Pods(pods.Items,
+		fuzzyfinder.WithAllNamespaces(o.allNamespaces),
+		fuzzyfinder.WithPreview(printer),
+		fuzzyfinder.WithRawPreview(o.rawPreview))
 	if err != nil {
 		return fmt.Errorf("failed to fuzzyfinder execute: %w", err)
 	}
