@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"time"
@@ -13,7 +14,9 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/cli-runtime/pkg/printers"
+	"k8s.io/cli-runtime/pkg/resource"
 	coreclient "k8s.io/client-go/kubernetes/typed/core/v1"
+	"k8s.io/kubectl/pkg/scheme"
 
 	"github.com/d-kuro/kubectl-fuzzy/pkg/fuzzyfinder"
 	"github.com/d-kuro/kubectl-fuzzy/pkg/kubernetes"
@@ -68,6 +71,7 @@ type LogsOptions struct {
 	genericclioptions.IOStreams
 
 	allNamespaces bool
+	namespace     string
 	follow        bool
 	previous      bool
 	since         time.Duration
@@ -77,7 +81,7 @@ type LogsOptions struct {
 	limitBytes    int64
 
 	podClient coreclient.PodsGetter
-	namespace string
+	builder   *resource.Builder
 
 	preview       bool
 	previewFormat string
@@ -134,6 +138,7 @@ func (o *LogsOptions) Complete(cmd *cobra.Command, args []string) error {
 	}
 
 	o.podClient = client.CoreV1()
+	o.builder = resource.NewBuilder(o.configFlags)
 
 	if !o.allNamespaces {
 		kubeConfig := o.configFlags.ToRawKubeConfigLoader()
@@ -156,9 +161,21 @@ func (LogsOptions) Validate() error {
 
 // Run execute fizzy finder and view logs.
 func (o *LogsOptions) Run(ctx context.Context) error {
-	pods, err := o.podClient.Pods(o.namespace).List(ctx, metav1.ListOptions{})
+	r := o.builder.
+		Unstructured().
+		ContinueOnError().
+		NamespaceParam(o.namespace).DefaultNamespace().AllNamespaces(o.allNamespaces).
+		ResourceTypeOrNameArgs(true, "pods").
+		Flatten().
+		Do()
+
+	if err := r.Err(); err != nil {
+		return fmt.Errorf("failed to request: %w", err)
+	}
+
+	infos, err := r.Infos()
 	if err != nil {
-		return fmt.Errorf("failed to list pods: %w", err)
+		return fmt.Errorf("failed to get infos: %w", err)
 	}
 
 	var printer printers.ResourcePrinter
@@ -169,12 +186,22 @@ func (o *LogsOptions) Run(ctx context.Context) error {
 		}
 	}
 
-	pod, err := fuzzyfinder.Pods(pods.Items,
+	info, err := fuzzyfinder.Infos(infos,
 		fuzzyfinder.WithAllNamespaces(o.allNamespaces),
 		fuzzyfinder.WithPreview(printer),
 		fuzzyfinder.WithRawPreview(o.rawPreview))
 	if err != nil {
 		return fmt.Errorf("failed to fuzzyfinder execute: %w", err)
+	}
+
+	uncastVersionedObj, err := scheme.Scheme.ConvertToVersion(info.Object, corev1.SchemeGroupVersion)
+	if err != nil {
+		return fmt.Errorf("from must be an existing cronjob: %v", err)
+	}
+
+	pod, ok := uncastVersionedObj.(*corev1.Pod)
+	if !ok {
+		return errors.New("illegal types that are not pod")
 	}
 
 	var containerName string
