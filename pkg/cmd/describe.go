@@ -64,38 +64,38 @@ type DescribeOptions struct {
 	printFlags  *genericclioptions.JSONYamlPrintFlags
 	genericclioptions.IOStreams
 
-	DescriberSettings *describe.DescriberSettings
+	describerSettings *describe.DescriberSettings
 
-	Builder   *resource.Builder
-	Describer func(*meta.RESTMapping) (describe.ResourceDescriber, error)
+	builder   *resource.Builder
+	describer func(*meta.RESTMapping) (describe.ResourceDescriber, error)
 
-	AllNamespaces bool
-	Namespace     string
-	Selector      string
-	BuilderArgs   []string
+	allNamespaces bool
+	namespace     string
+	selector      string
+	builderArgs   []string
 
-	Preview       bool
-	PreviewFormat string
-	RawPreview    bool
+	preview       bool
+	previewFormat string
+	rawPreview    bool
 }
 
 // AddFlags adds a flag to the flag set.
 func (o *DescribeOptions) AddFlags(flags *pflag.FlagSet) {
 	// kubectl flags
-	flags.BoolVarP(&o.AllNamespaces, "all-namespaces", "A", false,
+	flags.BoolVarP(&o.allNamespaces, "all-namespaces", "A", false,
 		"If present, list the requested object(s) across all namespaces."+
 			"Namespace in current context is ignored even if specified with --namespace.")
-	flags.StringVarP(&o.Selector, "selector", "l", "",
+	flags.StringVarP(&o.selector, "selector", "l", "",
 		"Selector (label query) to filter on, supports '=', '==', and '!='.(e.g. -l key1=value1,key2=value2)")
-	flags.BoolVar(&o.DescriberSettings.ShowEvents, "show-events", true,
+	flags.BoolVar(&o.describerSettings.ShowEvents, "show-events", true,
 		"If true, display events related to the described object.")
 
 	// original flags
-	flags.BoolVarP(&o.Preview, "preview", "P", false,
+	flags.BoolVarP(&o.preview, "preview", "P", false,
 		"If true, display the object YAML|JSON by preview window for fuzzy finder selector.")
-	flags.StringVar(&o.PreviewFormat, "preview-format", "yaml",
+	flags.StringVar(&o.previewFormat, "preview-format", "yaml",
 		"Preview window output format. One of json|yaml.")
-	flags.BoolVar(&o.RawPreview, "raw-preview", false,
+	flags.BoolVar(&o.rawPreview, "raw-preview", false,
 		"If true, display the unsimplified object in the preview window. (default is simplified)")
 }
 
@@ -105,7 +105,7 @@ func NewDescribeOptions(streams genericclioptions.IOStreams) *DescribeOptions {
 		configFlags: genericclioptions.NewConfigFlags(true),
 		printFlags:  genericclioptions.NewJSONYamlPrintFlags(),
 		IOStreams:   streams,
-		DescriberSettings: &describe.DescriberSettings{
+		describerSettings: &describe.DescriberSettings{
 			ShowEvents: true,
 		},
 	}
@@ -113,15 +113,15 @@ func NewDescribeOptions(streams genericclioptions.IOStreams) *DescribeOptions {
 
 // Complete sets all information required for show details.
 func (o *DescribeOptions) Complete(cmd *cobra.Command, args []string) error {
-	o.Builder = resource.NewBuilder(o.configFlags)
+	o.builder = resource.NewBuilder(o.configFlags)
 
-	o.Describer = func(mapping *meta.RESTMapping) (describe.ResourceDescriber, error) {
+	o.describer = func(mapping *meta.RESTMapping) (describe.ResourceDescriber, error) {
 		return describe.DescriberFn(o.configFlags, mapping)
 	}
 
-	o.BuilderArgs = args
+	o.builderArgs = args
 
-	if !o.AllNamespaces {
+	if !o.allNamespaces {
 		kubeConfig := o.configFlags.ToRawKubeConfigLoader()
 
 		namespace, _, err := kubeConfig.Namespace()
@@ -129,7 +129,7 @@ func (o *DescribeOptions) Complete(cmd *cobra.Command, args []string) error {
 			return fmt.Errorf("faild to get namespace from kube config: %w", err)
 		}
 
-		o.Namespace = namespace
+		o.namespace = namespace
 	}
 
 	return nil
@@ -142,12 +142,12 @@ func (DescribeOptions) Validate() error {
 
 // Run execute fizzy finder and show details.
 func (o *DescribeOptions) Run(ctx context.Context, args []string) error {
-	r := o.Builder.
+	r := o.builder.
 		Unstructured().
 		ContinueOnError().
-		NamespaceParam(o.Namespace).DefaultNamespace().AllNamespaces(o.AllNamespaces).
-		LabelSelectorParam(o.Selector).
-		ResourceTypeOrNameArgs(true, o.BuilderArgs...).
+		NamespaceParam(o.namespace).DefaultNamespace().AllNamespaces(o.allNamespaces).
+		LabelSelectorParam(o.selector).
+		ResourceTypeOrNameArgs(true, o.builderArgs...).
 		Flatten().
 		Do()
 
@@ -161,26 +161,26 @@ func (o *DescribeOptions) Run(ctx context.Context, args []string) error {
 	}
 
 	var printer printers.ResourcePrinter
-	if o.Preview {
-		printer, err = o.printFlags.ToPrinter(o.PreviewFormat)
+	if o.preview {
+		printer, err = o.printFlags.ToPrinter(o.previewFormat)
 		if err != nil {
 			return fmt.Errorf("failed to get printer: %w", err)
 		}
 	}
 
-	info, err := fuzzyfinder.Infos(infos, printer, o.AllNamespaces, o.RawPreview)
+	info, err := fuzzyfinder.Infos(infos, printer, o.allNamespaces, o.rawPreview)
 	if err != nil {
 		return fmt.Errorf("failed to fuzzyfinder execute: %w", err)
 	}
 
 	mapping := info.ResourceMapping()
 
-	describer, err := o.Describer(mapping)
+	describer, err := o.describer(mapping)
 	if err != nil {
 		return fmt.Errorf("failed to get describer: %w", err)
 	}
 
-	s, err := describer.Describe(info.Namespace, info.Name, *o.DescriberSettings)
+	s, err := describer.Describe(info.Namespace, info.Name, *o.describerSettings)
 	if err != nil {
 		return fmt.Errorf("failed to generates output: %w", err)
 	}

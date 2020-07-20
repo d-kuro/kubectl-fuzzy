@@ -76,13 +76,13 @@ type CreateJobOptions struct {
 	name string
 	from string
 
-	Builder   *resource.Builder
+	builder   *resource.Builder
 	jobClient batchv1client.JobsGetter
 	namespace string
 
-	Preview       bool
-	PreviewFormat string
-	RawPreview    bool
+	preview       bool
+	previewFormat string
+	rawPreview    bool
 }
 
 // NewCreateJobOptions provides an instance of CreateJobOptions with default values.
@@ -100,11 +100,11 @@ func (o *CreateJobOptions) AddFlags(flags *pflag.FlagSet) {
 	flags.StringVar(&o.from, "from", o.from, "The name of the resource to create a Job from (only cronjob is supported).")
 
 	// original flags
-	flags.BoolVarP(&o.Preview, "preview", "P", false,
+	flags.BoolVarP(&o.preview, "preview", "P", false,
 		"If true, display the object YAML|JSON by preview window for fuzzy finder selector.")
-	flags.StringVar(&o.PreviewFormat, "preview-format", "yaml",
+	flags.StringVar(&o.previewFormat, "preview-format", "yaml",
 		"Preview window output format. One of json|yaml.")
-	flags.BoolVar(&o.RawPreview, "raw-preview", false,
+	flags.BoolVar(&o.rawPreview, "raw-preview", false,
 		"If true, display the unsimplified object in the preview window. (default is simplified)")
 }
 
@@ -128,7 +128,7 @@ func (o *CreateJobOptions) Complete(cmd *cobra.Command, args []string) error {
 	}
 
 	o.jobClient = client.BatchV1()
-	o.Builder = resource.NewBuilder(o.configFlags)
+	o.builder = resource.NewBuilder(o.configFlags)
 
 	kubeConfig := o.configFlags.ToRawKubeConfigLoader()
 
@@ -158,7 +158,7 @@ func (o *CreateJobOptions) Validate() error {
 
 // Run execute fizzy finder and create job from cronJob.
 func (o *CreateJobOptions) Run(ctx context.Context) error {
-	infos, err := o.Builder.
+	infos, err := o.builder.
 		Unstructured().
 		NamespaceParam(o.namespace).DefaultNamespace().
 		ResourceTypes(o.from).
@@ -172,14 +172,14 @@ func (o *CreateJobOptions) Run(ctx context.Context) error {
 	}
 
 	var printer printers.ResourcePrinter
-	if o.Preview {
-		printer, err = o.previewPrintFlags.ToPrinter(o.PreviewFormat)
+	if o.preview {
+		printer, err = o.previewPrintFlags.ToPrinter(o.previewFormat)
 		if err != nil {
 			return err
 		}
 	}
 
-	info, err := fuzzyfinder.Infos(infos, printer, false, o.RawPreview)
+	info, err := fuzzyfinder.Infos(infos, printer, false, o.rawPreview)
 	if err != nil {
 		return fmt.Errorf("failed to fuzzyfinder execute: %w", err)
 	}

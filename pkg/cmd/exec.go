@@ -71,53 +71,53 @@ func NewCmdExec(streams genericclioptions.IOStreams) *cobra.Command {
 type ExecOptions struct {
 	configFlags *genericclioptions.ConfigFlags
 	printFlags  *genericclioptions.JSONYamlPrintFlags
-	StreamOptions
+	streamOptions
 
 	Client coreclient.CoreV1Interface
 
-	AllNamespaces bool
-	Command       []string
-	Namespace     string
+	allNamespaces bool
+	command       []string
+	namespace     string
 
-	Preview       bool
-	PreviewFormat string
-	RawPreview    bool
+	preview       bool
+	previewFormat string
+	rawPreview    bool
 }
 
-// StreamOptions holds information pertaining to the streaming session.
-type StreamOptions struct {
+// streamOptions holds information pertaining to the streaming session.
+type streamOptions struct {
 	genericclioptions.IOStreams
 
-	Stdin bool
-	TTY   bool
-	// InterruptParent, if set, is used to handle interrupts while attached
-	InterruptParent *interrupt.Handler
+	stdin bool
+	tty   bool
+	// interruptParent, if set, is used to handle interrupts while attached
+	interruptParent *interrupt.Handler
 }
 
 // AddFlags adds a flag to the flag set.
 func (o *ExecOptions) AddFlags(flags *pflag.FlagSet) {
 	// kubectl flags
-	flags.BoolVarP(&o.AllNamespaces, "all-namespaces", "A", false,
+	flags.BoolVarP(&o.allNamespaces, "all-namespaces", "A", false,
 		"If present, list the requested object(s) across all namespaces."+
 			"Namespace in current context is ignored even if specified with --namespace.")
-	flags.BoolVarP(&o.Stdin, "stdin", "i", false,
+	flags.BoolVarP(&o.stdin, "stdin", "i", false,
 		"Pass stdin to the container")
-	flags.BoolVarP(&o.TTY, "tty", "t", false,
+	flags.BoolVarP(&o.tty, "tty", "t", false,
 		"Stdin is a TTY")
 
 	// original flags
-	flags.BoolVarP(&o.Preview, "preview", "P", false,
+	flags.BoolVarP(&o.preview, "preview", "P", false,
 		"If true, display the object YAML|JSON by preview window for fuzzy finder selector.")
-	flags.StringVar(&o.PreviewFormat, "preview-format", "yaml",
+	flags.StringVar(&o.previewFormat, "preview-format", "yaml",
 		"Preview window output format. One of json|yaml.")
-	flags.BoolVar(&o.RawPreview, "raw-preview", false,
+	flags.BoolVar(&o.rawPreview, "raw-preview", false,
 		"If true, display the unsimplified object in the preview window. (default is simplified)")
 }
 
 // NewExecOptions provides an instance of ExecOptions with default values.
 func NewExecOptions(streams genericclioptions.IOStreams) *ExecOptions {
 	return &ExecOptions{
-		StreamOptions: StreamOptions{
+		streamOptions: streamOptions{
 			IOStreams: streams,
 		},
 		configFlags: genericclioptions.NewConfigFlags(true),
@@ -129,13 +129,13 @@ func NewExecOptions(streams genericclioptions.IOStreams) *ExecOptions {
 func (o *ExecOptions) Complete(cmd *cobra.Command, args []string, argsLenAtDash int) error {
 	switch {
 	case argsLenAtDash > -1:
-		o.Command = args[argsLenAtDash:]
+		o.command = args[argsLenAtDash:]
 	case len(args) > 0:
 		fmt.Fprint(o.IOStreams.ErrOut,
 			"kubectl exec fzf [COMMAND] is DEPRECATED and will be removed in a future version."+
 				"Use kubectl exec fzf -- [COMMAND] instead.\n")
 
-		o.Command = args
+		o.command = args
 	}
 
 	client, err := kubernetes.NewClient(o.configFlags)
@@ -145,7 +145,7 @@ func (o *ExecOptions) Complete(cmd *cobra.Command, args []string, argsLenAtDash 
 
 	o.Client = client.CoreV1()
 
-	if !o.AllNamespaces {
+	if !o.allNamespaces {
 		kubeConfig := o.configFlags.ToRawKubeConfigLoader()
 
 		namespace, _, err := kubeConfig.Namespace()
@@ -153,7 +153,7 @@ func (o *ExecOptions) Complete(cmd *cobra.Command, args []string, argsLenAtDash 
 			return fmt.Errorf("faild to get namespace from kube config: %w", err)
 		}
 
-		o.Namespace = namespace
+		o.namespace = namespace
 	}
 
 	return nil
@@ -161,7 +161,7 @@ func (o *ExecOptions) Complete(cmd *cobra.Command, args []string, argsLenAtDash 
 
 // Validate ensures that all required arguments and flag values are provided.
 func (o *ExecOptions) Validate() error {
-	if len(o.Command) == 0 {
+	if len(o.command) == 0 {
 		return fmt.Errorf("you must specify at least one command for the container")
 	}
 
@@ -170,20 +170,20 @@ func (o *ExecOptions) Validate() error {
 
 // Run execute fizzy finder and execute a command in a container.
 func (o *ExecOptions) Run(ctx context.Context) error {
-	pods, err := o.Client.Pods(o.Namespace).List(ctx, metav1.ListOptions{})
+	pods, err := o.Client.Pods(o.namespace).List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to list pods: %w", err)
 	}
 
 	var printer printers.ResourcePrinter
-	if o.Preview {
-		printer, err = o.printFlags.ToPrinter(o.PreviewFormat)
+	if o.preview {
+		printer, err = o.printFlags.ToPrinter(o.previewFormat)
 		if err != nil {
 			return err
 		}
 	}
 
-	pod, err := fuzzyfinder.Pods(pods.Items, printer, o.AllNamespaces, o.RawPreview)
+	pod, err := fuzzyfinder.Pods(pods.Items, printer, o.allNamespaces, o.rawPreview)
 	if err != nil {
 		return fmt.Errorf("failed to fuzzyfinder execute: %w", err)
 	}
@@ -233,8 +233,8 @@ func (o *ExecOptions) ExecFunc(pod corev1.Pod, containerName string,
 			SubResource("exec").
 			VersionedParams(&corev1.PodExecOptions{
 				Container: containerName,
-				Command:   o.Command,
-				Stdin:     o.Stdin,
+				Command:   o.command,
+				Stdin:     o.stdin,
 				Stdout:    o.Out != nil,
 				Stderr:    o.ErrOut != nil,
 				TTY:       tty.Raw,
@@ -262,28 +262,28 @@ func (o *ExecOptions) ExecFunc(pod corev1.Pod, containerName string,
 	return fn
 }
 
-func (o *StreamOptions) SetupTTY() term.TTY {
+func (o *streamOptions) SetupTTY() term.TTY {
 	t := term.TTY{
-		Parent: o.InterruptParent,
+		Parent: o.interruptParent,
 		Out:    o.Out,
 	}
 
-	if !o.Stdin {
+	if !o.stdin {
 		// need to nil out o.In to make sure we don't create a stream for stdin
 		o.In = nil
-		o.TTY = false
+		o.tty = false
 
 		return t
 	}
 
 	t.In = o.In
 
-	if !o.TTY {
+	if !o.tty {
 		return t
 	}
 
 	if !t.IsTerminalIn() {
-		o.TTY = false
+		o.tty = false
 
 		if o.ErrOut != nil {
 			fmt.Fprintln(o.ErrOut, "Unable to use a TTY - input is not a terminal or the right kind of file")
