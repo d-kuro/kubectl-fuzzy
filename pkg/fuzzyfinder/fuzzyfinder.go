@@ -16,6 +16,7 @@ import (
 	"github.com/d-kuro/kubectl-fuzzy/pkg/kubernetes/simplify"
 )
 
+// Option represents available fuzzy-finding options.
 type Option func(*opt)
 
 type opt struct {
@@ -24,24 +25,31 @@ type opt struct {
 	rawPreview    bool
 }
 
+// WithAllNamespaces specifies whether to display the namespace during fuzzy-finding.
+// Default is false.
 func WithAllNamespaces(allNamespace bool) Option {
 	return func(o *opt) {
 		o.allNamespaces = allNamespace
 	}
 }
 
+// WithPreview specifies whether to show a preview during fuzzy-finding.
+// The output of the preview is done using the ResourcePrinter.
 func WithPreview(printer printers.ResourcePrinter) Option {
 	return func(o *opt) {
 		o.printer = printer
 	}
 }
 
+// WithRawPreview specifies whether an unsimplified object should be displayed in the fuzzy-finding preview.
+// Default is false.
 func WithRawPreview(rawPreview bool) Option {
 	return func(o *opt) {
 		o.rawPreview = rawPreview
 	}
 }
 
+// Pods will start a fuzzy finder based on the received pods and returns the selected pod.
 func Pods(pods []corev1.Pod, opts ...Option) (corev1.Pod, error) {
 	var opt opt
 
@@ -126,6 +134,7 @@ func Containers(containers []corev1.Container) (corev1.Container, error) {
 	return containers[idx], nil
 }
 
+// Infos will start a fuzzy finder based on the received infos and returns the selected info.
 func Infos(infos []*resource.Info, opts ...Option) (*resource.Info, error) {
 	var opt opt
 
