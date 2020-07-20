@@ -3,7 +3,8 @@ run:
 linters:
   enable-all: true
   disable:
+    - funlen
     - goerr113
-    - maligned
     - gofumpt
     - gomnd
+    - maligned

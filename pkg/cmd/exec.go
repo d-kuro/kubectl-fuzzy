@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -10,9 +11,9 @@ import (
 	"github.com/spf13/pflag"
 
 	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/cli-runtime/pkg/printers"
+	"k8s.io/cli-runtime/pkg/resource"
 	coreclient "k8s.io/client-go/kubernetes/typed/core/v1"
 	"k8s.io/client-go/tools/remotecommand"
 	"k8s.io/kubectl/pkg/scheme"
@@ -73,11 +74,13 @@ type ExecOptions struct {
 	printFlags  *genericclioptions.JSONYamlPrintFlags
 	streamOptions
 
-	Client coreclient.CoreV1Interface
+	client  coreclient.CoreV1Interface
+	builder *resource.Builder
 
 	allNamespaces bool
-	command       []string
 	namespace     string
+	selector      string
+	command       []string
 
 	preview       bool
 	previewFormat string
@@ -100,6 +103,8 @@ func (o *ExecOptions) AddFlags(flags *pflag.FlagSet) {
 	flags.BoolVarP(&o.allNamespaces, "all-namespaces", "A", false,
 		"If present, list the requested object(s) across all namespaces."+
 			"Namespace in current context is ignored even if specified with --namespace.")
+	flags.StringVarP(&o.selector, "selector", "l", "",
+		"Selector (label query) to filter on, supports '=', '==', and '!='.(e.g. -l key1=value1,key2=value2)")
 	flags.BoolVarP(&o.stdin, "stdin", "i", false,
 		"Pass stdin to the container")
 	flags.BoolVarP(&o.tty, "tty", "t", false,
@@ -143,7 +148,8 @@ func (o *ExecOptions) Complete(cmd *cobra.Command, args []string, argsLenAtDash 
 		return fmt.Errorf("failed to new Kubernetes client: %w", err)
 	}
 
-	o.Client = client.CoreV1()
+	o.client = client.CoreV1()
+	o.builder = resource.NewBuilder(o.configFlags)
 
 	if !o.allNamespaces {
 		kubeConfig := o.configFlags.ToRawKubeConfigLoader()
@@ -170,9 +176,22 @@ func (o *ExecOptions) Validate() error {
 
 // Run execute fizzy finder and execute a command in a container.
 func (o *ExecOptions) Run(ctx context.Context) error {
-	pods, err := o.Client.Pods(o.namespace).List(ctx, metav1.ListOptions{})
+	r := o.builder.
+		Unstructured().
+		ContinueOnError().
+		NamespaceParam(o.namespace).DefaultNamespace().AllNamespaces(o.allNamespaces).
+		LabelSelectorParam(o.selector).
+		ResourceTypeOrNameArgs(true, "pods").
+		Flatten().
+		Do()
+
+	if err := r.Err(); err != nil {
+		return fmt.Errorf("failed to request: %w", err)
+	}
+
+	infos, err := r.Infos()
 	if err != nil {
-		return fmt.Errorf("failed to list pods: %w", err)
+		return fmt.Errorf("failed to get infos: %w", err)
 	}
 
 	var printer printers.ResourcePrinter
@@ -183,9 +202,19 @@ func (o *ExecOptions) Run(ctx context.Context) error {
 		}
 	}
 
-	pod, err := fuzzyfinder.Pods(pods.Items, printer, o.allNamespaces, o.rawPreview)
+	info, err := fuzzyfinder.Infos(infos, printer, o.allNamespaces, o.rawPreview)
 	if err != nil {
 		return fmt.Errorf("failed to fuzzyfinder execute: %w", err)
+	}
+
+	uncastVersionedObj, err := scheme.Scheme.ConvertToVersion(info.Object, corev1.SchemeGroupVersion)
+	if err != nil {
+		return fmt.Errorf("from must be an existing cronjob: %v", err)
+	}
+
+	pod, ok := uncastVersionedObj.(*corev1.Pod)
+	if !ok {
+		return errors.New("illegal types that are not pod")
 	}
 
 	var containerName string
@@ -222,10 +251,10 @@ func (o *ExecOptions) Run(ctx context.Context) error {
 }
 
 // ExecFunc returns a function for executing the execute a command in a container.
-func (o *ExecOptions) ExecFunc(pod corev1.Pod, containerName string,
+func (o *ExecOptions) ExecFunc(pod *corev1.Pod, containerName string,
 	tty term.TTY, sizeQueue remotecommand.TerminalSizeQueue) func() error {
 	fn := func() error {
-		req := o.Client.RESTClient().
+		req := o.client.RESTClient().
 			Post().
 			Resource("pods").
 			Name(pod.Name).
