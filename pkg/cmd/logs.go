@@ -67,53 +67,53 @@ type LogsOptions struct {
 	printFlags  *genericclioptions.JSONYamlPrintFlags
 	genericclioptions.IOStreams
 
-	AllNamespaces bool
-	Follow        bool
-	Previous      bool
-	Since         time.Duration
-	SinceTime     string
-	Timestamps    bool
-	TailLines     int64
-	LimitBytes    int64
+	allNamespaces bool
+	follow        bool
+	previous      bool
+	since         time.Duration
+	sinceTime     string
+	timestamps    bool
+	tailLines     int64
+	limitBytes    int64
 
-	PodClient coreclient.PodsGetter
-	Namespace string
+	podClient coreclient.PodsGetter
+	namespace string
 
-	Preview       bool
-	PreviewFormat string
-	RawPreview    bool
+	preview       bool
+	previewFormat string
+	rawPreview    bool
 }
 
 // AddFlags adds a flag to the flag set.
 func (o *LogsOptions) AddFlags(flags *pflag.FlagSet) {
 	// kubectl flags
-	flags.BoolVarP(&o.AllNamespaces, "all-namespaces", "A", false,
+	flags.BoolVarP(&o.allNamespaces, "all-namespaces", "A", false,
 		"If present, list the requested object(s) across all namespaces."+
 			"Namespace in current context is ignored even if specified with --namespace.")
-	flags.BoolVarP(&o.Follow, "follow", "f", false,
+	flags.BoolVarP(&o.follow, "follow", "f", false,
 		"Specify if the logs should be streamed.")
-	flags.BoolVarP(&o.Previous, "previous", "p", false,
+	flags.BoolVarP(&o.previous, "previous", "p", false,
 		"If true, print the logs for the previous instance of the container in a pod if it exists.")
-	flags.DurationVar(&o.Since, "since", time.Second*0,
+	flags.DurationVar(&o.since, "since", time.Second*0,
 		"Only return logs newer than a relative duration like 5s, 2m, or 3h. Defaults to all logs."+
 			"Only one of since-time / since may be used.")
-	flags.StringVar(&o.SinceTime, "since-time", "",
+	flags.StringVar(&o.sinceTime, "since-time", "",
 		"Only return logs after a specific date (RFC3339). Defaults to all logs."+
 			"Only one of since-time / since may be used.")
-	flags.BoolVar(&o.Timestamps, "timestamps", false,
+	flags.BoolVar(&o.timestamps, "timestamps", false,
 		"Include timestamps on each line in the log output.")
-	flags.Int64Var(&o.TailLines, "tail", -1,
+	flags.Int64Var(&o.tailLines, "tail", -1,
 		"Lines of recent log file to display. Defaults to -1 with no selector,"+
 			"showing all log lines otherwise 10, if a selector is provided.")
-	flags.Int64Var(&o.LimitBytes, "limit-bytes", 0,
+	flags.Int64Var(&o.limitBytes, "limit-bytes", 0,
 		"Maximum bytes of logs to return. Defaults to no limit.")
 
 	// original flags
-	flags.BoolVarP(&o.Preview, "preview", "P", false,
+	flags.BoolVarP(&o.preview, "preview", "P", false,
 		"If true, display the object YAML|JSON by preview window for fuzzy finder selector.")
-	flags.StringVar(&o.PreviewFormat, "preview-format", "yaml",
+	flags.StringVar(&o.previewFormat, "preview-format", "yaml",
 		"Preview window output format. One of json|yaml.")
-	flags.BoolVar(&o.RawPreview, "raw-preview", false,
+	flags.BoolVar(&o.rawPreview, "raw-preview", false,
 		"If true, display the unsimplified object in the preview window. (default is simplified)")
 }
 
@@ -133,9 +133,9 @@ func (o *LogsOptions) Complete(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to new Kubernetes client: %w", err)
 	}
 
-	o.PodClient = client.CoreV1()
+	o.podClient = client.CoreV1()
 
-	if !o.AllNamespaces {
+	if !o.allNamespaces {
 		kubeConfig := o.configFlags.ToRawKubeConfigLoader()
 
 		namespace, _, err := kubeConfig.Namespace()
@@ -143,7 +143,7 @@ func (o *LogsOptions) Complete(cmd *cobra.Command, args []string) error {
 			return fmt.Errorf("faild to get namespace from kube config: %w", err)
 		}
 
-		o.Namespace = namespace
+		o.namespace = namespace
 	}
 
 	return nil
@@ -156,20 +156,20 @@ func (LogsOptions) Validate() error {
 
 // Run execute fizzy finder and view logs.
 func (o *LogsOptions) Run(ctx context.Context) error {
-	pods, err := o.PodClient.Pods(o.Namespace).List(ctx, metav1.ListOptions{})
+	pods, err := o.podClient.Pods(o.namespace).List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to list pods: %w", err)
 	}
 
 	var printer printers.ResourcePrinter
-	if o.Preview {
-		printer, err = o.printFlags.ToPrinter(o.PreviewFormat)
+	if o.preview {
+		printer, err = o.printFlags.ToPrinter(o.previewFormat)
 		if err != nil {
 			return err
 		}
 	}
 
-	pod, err := fuzzyfinder.Pods(pods.Items, printer, o.AllNamespaces, o.RawPreview)
+	pod, err := fuzzyfinder.Pods(pods.Items, printer, o.allNamespaces, o.rawPreview)
 	if err != nil {
 		return fmt.Errorf("failed to fuzzyfinder execute: %w", err)
 	}
@@ -187,13 +187,13 @@ func (o *LogsOptions) Run(ctx context.Context) error {
 		containerName = pod.Spec.Containers[0].Name
 	}
 
-	req := o.PodClient.Pods(pod.Namespace).GetLogs(pod.Name, &corev1.PodLogOptions{
+	req := o.podClient.Pods(pod.Namespace).GetLogs(pod.Name, &corev1.PodLogOptions{
 		Container:    containerName,
-		Follow:       o.Follow,
-		Previous:     o.Previous,
+		Follow:       o.follow,
+		Previous:     o.previous,
 		SinceSeconds: o.ConvertSinceSeconds(),
 		SinceTime:    o.ConvertSinceTime(),
-		Timestamps:   o.Timestamps,
+		Timestamps:   o.timestamps,
 		TailLines:    o.ConvertTailLines(),
 		LimitBytes:   o.ConvertLimitBytes(),
 	})
@@ -212,7 +212,7 @@ func (o *LogsOptions) Run(ctx context.Context) error {
 }
 
 func (o *LogsOptions) ConvertSinceSeconds() *int64 {
-	i := int64(o.Since)
+	i := int64(o.since)
 	if i == 0 {
 		return nil
 	}
@@ -221,11 +221,11 @@ func (o *LogsOptions) ConvertSinceSeconds() *int64 {
 }
 
 func (o *LogsOptions) ConvertSinceTime() *metav1.Time {
-	if len(o.SinceTime) == 0 {
+	if len(o.sinceTime) == 0 {
 		return nil
 	}
 
-	t, err := time.Parse(o.SinceTime, time.RFC3339)
+	t, err := time.Parse(o.sinceTime, time.RFC3339)
 	if err != nil {
 		return nil
 	}
@@ -234,17 +234,17 @@ func (o *LogsOptions) ConvertSinceTime() *metav1.Time {
 }
 
 func (o *LogsOptions) ConvertTailLines() *int64 {
-	if o.TailLines == -1 {
+	if o.tailLines == -1 {
 		return nil
 	}
 
-	return &o.TailLines
+	return &o.tailLines
 }
 
 func (o *LogsOptions) ConvertLimitBytes() *int64 {
-	if o.LimitBytes == 0 {
+	if o.limitBytes == 0 {
 		return nil
 	}
 
-	return &o.LimitBytes
+	return &o.limitBytes
 }
