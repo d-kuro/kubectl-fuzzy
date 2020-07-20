@@ -6,5 +6,4 @@ linters:
     - funlen
     - goerr113
     - gofumpt
-    - gomnd
     - maligned
