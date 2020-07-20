@@ -168,7 +168,10 @@ func (o *DescribeOptions) Run(ctx context.Context, args []string) error {
 		}
 	}
 
-	info, err := fuzzyfinder.Infos(infos, printer, o.allNamespaces, o.rawPreview)
+	info, err := fuzzyfinder.Infos(infos,
+		fuzzyfinder.WithAllNamespaces(o.allNamespaces),
+		fuzzyfinder.WithPreview(printer),
+		fuzzyfinder.WithRawPreview(o.rawPreview))
 	if err != nil {
 		return fmt.Errorf("failed to fuzzyfinder execute: %w", err)
 	}

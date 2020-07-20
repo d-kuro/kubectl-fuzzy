@@ -179,7 +179,10 @@ func (o *CreateJobOptions) Run(ctx context.Context) error {
 		}
 	}
 
-	info, err := fuzzyfinder.Infos(infos, printer, false, o.rawPreview)
+	info, err := fuzzyfinder.Infos(infos,
+		fuzzyfinder.WithAllNamespaces(false),
+		fuzzyfinder.WithPreview(printer),
+		fuzzyfinder.WithRawPreview(o.rawPreview))
 	if err != nil {
 		return fmt.Errorf("failed to fuzzyfinder execute: %w", err)
 	}
