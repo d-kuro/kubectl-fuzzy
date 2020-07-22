@@ -171,6 +171,10 @@ func (o *CreateJobOptions) Run(ctx context.Context) error {
 		return fmt.Errorf("failed to list cronJobs: %w", err)
 	}
 
+	if len(infos) == 0 {
+		return errors.New("no resources found")
+	}
+
 	var printer printers.ResourcePrinter
 	if o.preview {
 		printer, err = o.previewPrintFlags.ToPrinter(o.previewFormat)
