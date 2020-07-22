@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -158,6 +159,10 @@ func (o *DescribeOptions) Run(ctx context.Context, args []string) error {
 	infos, err := r.Infos()
 	if err != nil {
 		return fmt.Errorf("failed to get infos: %w", err)
+	}
+
+	if len(infos) == 0 {
+		return errors.New("no resources found")
 	}
 
 	var printer printers.ResourcePrinter

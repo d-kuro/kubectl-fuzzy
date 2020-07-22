@@ -178,6 +178,10 @@ func (o *LogsOptions) Run(ctx context.Context) error {
 		return fmt.Errorf("failed to get infos: %w", err)
 	}
 
+	if len(infos) == 0 {
+		return errors.New("no resources found")
+	}
+
 	var printer printers.ResourcePrinter
 	if o.preview {
 		printer, err = o.printFlags.ToPrinter(o.previewFormat)
