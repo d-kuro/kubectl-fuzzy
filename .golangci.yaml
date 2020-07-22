@@ -5,5 +5,4 @@ linters:
   disable:
     - funlen
     - goerr113
-    - gofumpt
     - maligned
