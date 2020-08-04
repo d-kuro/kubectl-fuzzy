@@ -15,6 +15,7 @@ func NewCmdRoot(streams genericclioptions.IOStreams) *cobra.Command {
 			if err := c.Usage(); err != nil {
 				return err
 			}
+
 			return nil
 		},
 	}

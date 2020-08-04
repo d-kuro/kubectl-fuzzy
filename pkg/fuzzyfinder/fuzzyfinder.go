@@ -5,14 +5,12 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/d-kuro/kubectl-fuzzy/pkg/kubernetes/simplify"
 	"github.com/ktr0731/go-fuzzyfinder"
-
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/cli-runtime/pkg/printers"
 	"k8s.io/cli-runtime/pkg/resource"
 	"sigs.k8s.io/yaml"
-
-	"github.com/d-kuro/kubectl-fuzzy/pkg/kubernetes/simplify"
 )
 
 // Option represents available fuzzy-finding options.
@@ -112,8 +110,10 @@ func rawInfoPreviewWindow(infos []*resource.Info, printer printers.ResourcePrint
 			if err := printer.PrintObj(infos[i].Object, buf); err != nil {
 				return fmt.Sprintf("error: %s", err)
 			}
+
 			return strings.TrimPrefix(buf.String(), "---\n")
 		}
+
 		return ""
 	})
 }
@@ -135,6 +135,7 @@ func infoPreviewWindow(infos []*resource.Info, printer printers.ResourcePrinter)
 
 			return simplified
 		}
+
 		return ""
 	})
 }
