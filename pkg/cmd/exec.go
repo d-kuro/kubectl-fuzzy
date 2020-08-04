@@ -6,10 +6,11 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/d-kuro/kubectl-fuzzy/pkg/fuzzyfinder"
+	"github.com/d-kuro/kubectl-fuzzy/pkg/kubernetes"
 	dockerterm "github.com/moby/term"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/cli-runtime/pkg/printers"
@@ -19,9 +20,6 @@ import (
 	"k8s.io/kubectl/pkg/scheme"
 	"k8s.io/kubectl/pkg/util/interrupt"
 	"k8s.io/kubectl/pkg/util/term"
-
-	"github.com/d-kuro/kubectl-fuzzy/pkg/fuzzyfinder"
-	"github.com/d-kuro/kubectl-fuzzy/pkg/kubernetes"
 )
 
 const (

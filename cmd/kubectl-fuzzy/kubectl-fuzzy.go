@@ -5,12 +5,11 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/d-kuro/kubectl-fuzzy/pkg/cmd"
+	"github.com/d-kuro/kubectl-fuzzy/pkg/signal"
 	"github.com/spf13/pflag"
 	"golang.org/x/sync/errgroup"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
-
-	"github.com/d-kuro/kubectl-fuzzy/pkg/cmd"
-	"github.com/d-kuro/kubectl-fuzzy/pkg/signal"
 )
 
 func main() {

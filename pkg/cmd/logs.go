@@ -7,9 +7,10 @@ import (
 	"io"
 	"time"
 
+	"github.com/d-kuro/kubectl-fuzzy/pkg/fuzzyfinder"
+	"github.com/d-kuro/kubectl-fuzzy/pkg/kubernetes"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
@@ -17,9 +18,6 @@ import (
 	"k8s.io/cli-runtime/pkg/resource"
 	coreclient "k8s.io/client-go/kubernetes/typed/core/v1"
 	"k8s.io/kubectl/pkg/scheme"
-
-	"github.com/d-kuro/kubectl-fuzzy/pkg/fuzzyfinder"
-	"github.com/d-kuro/kubectl-fuzzy/pkg/kubernetes"
 )
 
 const (

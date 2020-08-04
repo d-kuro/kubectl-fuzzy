@@ -5,16 +5,14 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/d-kuro/kubectl-fuzzy/pkg/fuzzyfinder"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-
 	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/cli-runtime/pkg/printers"
 	"k8s.io/cli-runtime/pkg/resource"
 	"k8s.io/kubectl/pkg/describe"
-
-	"github.com/d-kuro/kubectl-fuzzy/pkg/fuzzyfinder"
 )
 
 const (
