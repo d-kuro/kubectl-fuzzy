@@ -24,6 +24,7 @@ func main() {
 	eg, ctx := errgroup.WithContext(ctx)
 	eg.Go(func() error {
 		defer close(done)
+
 		return root.ExecuteContext(ctx)
 	})
 	eg.Go(func() error {

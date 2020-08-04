@@ -16,6 +16,7 @@ func Handler(ctx context.Context, done chan struct{}) error {
 	select {
 	case <-ctx.Done():
 		signal.Reset()
+
 		return nil
 	case <-done:
 		return nil

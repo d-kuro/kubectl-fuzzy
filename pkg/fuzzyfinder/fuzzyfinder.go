@@ -112,8 +112,10 @@ func rawInfoPreviewWindow(infos []*resource.Info, printer printers.ResourcePrint
 			if err := printer.PrintObj(infos[i].Object, buf); err != nil {
 				return fmt.Sprintf("error: %s", err)
 			}
+
 			return strings.TrimPrefix(buf.String(), "---\n")
 		}
+
 		return ""
 	})
 }
@@ -135,6 +137,7 @@ func infoPreviewWindow(infos []*resource.Info, printer printers.ResourcePrinter)
 
 			return simplified
 		}
+
 		return ""
 	})
 }
