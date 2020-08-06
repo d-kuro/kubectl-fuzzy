@@ -10,6 +10,9 @@ import (
 	"github.com/spf13/pflag"
 	"golang.org/x/sync/errgroup"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
+
+	//  import the auth plugin package
+	_ "k8s.io/client-go/plugin/pkg/client/auth"
 )
 
 func main() {
