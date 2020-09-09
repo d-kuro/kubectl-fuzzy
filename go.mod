@@ -13,6 +13,6 @@ require (
 	k8s.io/apimachinery v0.19.1
 	k8s.io/cli-runtime v0.19.0
 	k8s.io/client-go v0.19.0
-	k8s.io/kubectl v0.19.0
+	k8s.io/kubectl v0.19.1
 	sigs.k8s.io/yaml v1.2.0
 )
