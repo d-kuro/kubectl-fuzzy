@@ -16,7 +16,7 @@ jobs:
             ${{ runner.os }}-go-
       - uses: golangci/golangci-lint-action@v2
         with:
-          version: v1.30
+          version: v1.31
           args: --timeout=3m0s
       - name: Run tests
         run: go test -race -v ./...
