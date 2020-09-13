@@ -11,8 +11,8 @@ import (
 )
 
 // NewCmdCreate provides a cobra command wrapping CreateOptions.
-func NewCmdCreate(streams genericclioptions.IOStreams) *cobra.Command {
-	o := NewCreateOptions(streams)
+func NewCmdCreate(config *genericclioptions.ConfigFlags, streams genericclioptions.IOStreams) *cobra.Command {
+	o := NewCreateOptions(config, streams)
 
 	cmd := &cobra.Command{
 		Use:           "create",
@@ -28,7 +28,7 @@ func NewCmdCreate(streams genericclioptions.IOStreams) *cobra.Command {
 	o.configFlags.AddFlags(flags)
 	o.AddFlags(flags)
 
-	cmd.AddCommand(NewCmdCreateJob(streams))
+	cmd.AddCommand(NewCmdCreateJob(config, streams))
 
 	return cmd
 }
@@ -42,9 +42,9 @@ type CreateOptions struct {
 }
 
 // NewCreateOptions provides an instance of CreateOptions with default values.
-func NewCreateOptions(streams genericclioptions.IOStreams) *CreateOptions {
+func NewCreateOptions(config *genericclioptions.ConfigFlags, streams genericclioptions.IOStreams) *CreateOptions {
 	return &CreateOptions{
-		configFlags: genericclioptions.NewConfigFlags(true),
+		configFlags: config,
 		printFlags:  genericclioptions.NewPrintFlags("created").WithTypeSetter(scheme.Scheme),
 		IOStreams:   streams,
 	}

@@ -23,8 +23,8 @@ const (
 )
 
 // NewCmdDescribe provides a cobra command wrapping DescribeOptions.
-func NewCmdDescribe(streams genericclioptions.IOStreams) *cobra.Command {
-	o := NewDescribeOptions(streams)
+func NewCmdDescribe(config *genericclioptions.ConfigFlags, streams genericclioptions.IOStreams) *cobra.Command {
+	o := NewDescribeOptions(config, streams)
 
 	cmd := &cobra.Command{
 		Use:           "describe",
@@ -49,9 +49,7 @@ func NewCmdDescribe(streams genericclioptions.IOStreams) *cobra.Command {
 		},
 	}
 
-	flags := cmd.Flags()
-	o.configFlags.AddFlags(flags)
-	o.AddFlags(flags)
+	o.AddFlags(cmd.Flags())
 
 	return cmd
 }
@@ -99,9 +97,9 @@ func (o *DescribeOptions) AddFlags(flags *pflag.FlagSet) {
 }
 
 // NewDescribeOptions provides an instance of DescribeOptions with default values.
-func NewDescribeOptions(streams genericclioptions.IOStreams) *DescribeOptions {
+func NewDescribeOptions(config *genericclioptions.ConfigFlags, streams genericclioptions.IOStreams) *DescribeOptions {
 	return &DescribeOptions{
-		configFlags: genericclioptions.NewConfigFlags(true),
+		configFlags: config,
 		printFlags:  genericclioptions.NewJSONYamlPrintFlags(),
 		IOStreams:   streams,
 		describerSettings: &describe.DescriberSettings{
