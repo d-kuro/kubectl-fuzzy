@@ -28,8 +28,8 @@ const (
 )
 
 // NewCmdLogs provides a cobra command wrapping LogsOptions.
-func NewCmdLogs(streams genericclioptions.IOStreams) *cobra.Command {
-	o := NewLogsOptions(streams)
+func NewCmdLogs(config *genericclioptions.ConfigFlags, streams genericclioptions.IOStreams) *cobra.Command {
+	o := NewLogsOptions(config, streams)
 
 	cmd := &cobra.Command{
 		Use:           "logs",
@@ -54,9 +54,7 @@ func NewCmdLogs(streams genericclioptions.IOStreams) *cobra.Command {
 		},
 	}
 
-	flags := cmd.Flags()
-	o.configFlags.AddFlags(flags)
-	o.AddFlags(flags)
+	o.AddFlags(cmd.Flags())
 
 	return cmd
 }
@@ -120,9 +118,9 @@ func (o *LogsOptions) AddFlags(flags *pflag.FlagSet) {
 }
 
 // NewLogsOptions provides an instance of LogsOptions with default values.
-func NewLogsOptions(streams genericclioptions.IOStreams) *LogsOptions {
+func NewLogsOptions(flags *genericclioptions.ConfigFlags, streams genericclioptions.IOStreams) *LogsOptions {
 	return &LogsOptions{
-		configFlags: genericclioptions.NewConfigFlags(true),
+		configFlags: flags,
 		printFlags:  genericclioptions.NewJSONYamlPrintFlags(),
 		IOStreams:   streams,
 	}
