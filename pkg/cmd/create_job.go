@@ -30,8 +30,8 @@ const (
 )
 
 // NewCmdCreateJob provides a cobra command wrapping CreateJobOptions.
-func NewCmdCreateJob(streams genericclioptions.IOStreams) *cobra.Command {
-	o := NewCreateJobOptions(streams)
+func NewCmdCreateJob(config *genericclioptions.ConfigFlags, streams genericclioptions.IOStreams) *cobra.Command {
+	o := NewCreateJobOptions(config, streams)
 
 	cmd := &cobra.Command{
 		Use:           "job [NAME] --from=cronjob",
@@ -86,9 +86,9 @@ type CreateJobOptions struct {
 }
 
 // NewCreateJobOptions provides an instance of CreateJobOptions with default values.
-func NewCreateJobOptions(streams genericclioptions.IOStreams) *CreateJobOptions {
+func NewCreateJobOptions(config *genericclioptions.ConfigFlags, streams genericclioptions.IOStreams) *CreateJobOptions {
 	return &CreateJobOptions{
-		configFlags:       genericclioptions.NewConfigFlags(true),
+		configFlags:       config,
 		previewPrintFlags: genericclioptions.NewJSONYamlPrintFlags(),
 		printFlags:        genericclioptions.NewPrintFlags("created").WithTypeSetter(scheme.Scheme),
 		IOStreams:         streams,

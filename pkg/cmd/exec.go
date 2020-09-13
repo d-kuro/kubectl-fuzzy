@@ -30,8 +30,8 @@ const (
 )
 
 // NewCmdExec provides a cobra command wrapping ExecOptions.
-func NewCmdExec(streams genericclioptions.IOStreams) *cobra.Command {
-	o := NewExecOptions(streams)
+func NewCmdExec(config *genericclioptions.ConfigFlags, streams genericclioptions.IOStreams) *cobra.Command {
+	o := NewExecOptions(config, streams)
 
 	cmd := &cobra.Command{
 		Use:           "exec",
@@ -58,9 +58,7 @@ func NewCmdExec(streams genericclioptions.IOStreams) *cobra.Command {
 		},
 	}
 
-	flags := cmd.Flags()
-	o.configFlags.AddFlags(flags)
-	o.AddFlags(flags)
+	o.AddFlags(cmd.Flags())
 
 	return cmd
 }
@@ -118,12 +116,12 @@ func (o *ExecOptions) AddFlags(flags *pflag.FlagSet) {
 }
 
 // NewExecOptions provides an instance of ExecOptions with default values.
-func NewExecOptions(streams genericclioptions.IOStreams) *ExecOptions {
+func NewExecOptions(config *genericclioptions.ConfigFlags, streams genericclioptions.IOStreams) *ExecOptions {
 	return &ExecOptions{
 		streamOptions: streamOptions{
 			IOStreams: streams,
 		},
-		configFlags: genericclioptions.NewConfigFlags(true),
+		configFlags: config,
 		printFlags:  genericclioptions.NewJSONYamlPrintFlags(),
 	}
 }
