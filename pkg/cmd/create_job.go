@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/d-kuro/kubectl-fuzzy/pkg/fuzzyfinder"
@@ -116,11 +115,11 @@ func (o *CreateJobOptions) Complete(cmd *cobra.Command, args []string) error {
 	}
 
 	if o.from == "" {
-		return errors.New("--from option is required, only supported job from cronjob")
+		return fmt.Errorf("--from option is required, only supported job from cronjob")
 	}
 
 	if o.from != "cronjob" {
-		return errors.New("must specify resource, only supported cronjob")
+		return fmt.Errorf("must specify resource, only supported cronjob")
 	}
 
 	if len(args) >= 1 {
@@ -172,7 +171,7 @@ func (o *CreateJobOptions) Run(ctx context.Context) error {
 	}
 
 	if len(infos) == 0 {
-		return errors.New("no resources found")
+		return fmt.Errorf("resource not found")
 	}
 
 	var printer printers.ResourcePrinter
@@ -198,7 +197,7 @@ func (o *CreateJobOptions) Run(ctx context.Context) error {
 
 	cj, ok := uncastVersionedObj.(*batchv1beta1.CronJob)
 	if !ok {
-		return errors.New("failed to cast cronjob")
+		return fmt.Errorf("failed to cast cronjob")
 	}
 
 	job := o.createJobFromCronJob(cj, &o.name)
