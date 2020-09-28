@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net/http"
 
@@ -191,7 +190,7 @@ func (o *ExecOptions) Run(ctx context.Context) error {
 	}
 
 	if len(infos) == 0 {
-		return errors.New("no resources found")
+		return fmt.Errorf("resource not found")
 	}
 
 	var printer printers.ResourcePrinter
@@ -217,7 +216,7 @@ func (o *ExecOptions) Run(ctx context.Context) error {
 
 	pod, ok := uncastVersionedObj.(*corev1.Pod)
 	if !ok {
-		return errors.New("illegal types that are not pod")
+		return fmt.Errorf("illegal types that are not pod")
 	}
 
 	var containerName string

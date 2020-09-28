@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/d-kuro/kubectl-fuzzy/pkg/fuzzyfinder"
@@ -158,7 +157,7 @@ func (o *DescribeOptions) Run(ctx context.Context, args []string) error {
 	}
 
 	if len(infos) == 0 {
-		return errors.New("no resources found")
+		return fmt.Errorf("resource not found")
 	}
 
 	var printer printers.ResourcePrinter

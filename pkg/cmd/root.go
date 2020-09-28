@@ -41,6 +41,7 @@ func AddSubCmd(cmd *cobra.Command, config *globalConfig) *cobra.Command {
 	cmd.AddCommand(NewCmdExec(config.configFlags, config.streams))
 	cmd.AddCommand(NewCmdDescribe(config.configFlags, config.streams))
 	cmd.AddCommand(NewCmdCreate(config.configFlags, config.streams))
+	cmd.AddCommand(NewCmdDelete(config.configFlags, config.streams))
 	cmd.AddCommand(NewCmdVersion())
 
 	return cmd
