@@ -7,7 +7,7 @@ require (
 	github.com/moby/term v0.0.0-20200915141129-7f0af18e79f2
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/pflag v1.0.5
-	github.com/tidwall/sjson v1.1.1
+	github.com/tidwall/sjson v1.1.2
 	golang.org/x/sync v0.0.0-20200930132711-30421366ff76
 	k8s.io/api v0.19.2
 	k8s.io/apimachinery v0.19.2
