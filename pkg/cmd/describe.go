@@ -80,7 +80,7 @@ type DescribeOptions struct {
 func (o *DescribeOptions) AddFlags(flags *pflag.FlagSet) {
 	// kubectl flags
 	flags.BoolVarP(&o.allNamespaces, "all-namespaces", "A", false,
-		"If present, list the requested object(s) across all namespaces."+
+		"If present, list the requested object(s) across all namespaces. "+
 			"Namespace in current context is ignored even if specified with --namespace.")
 	flags.StringVarP(&o.selector, "selector", "l", "",
 		"Selector (label query) to filter on, supports '=', '==', and '!='.(e.g. -l key1=value1,key2=value2)")
