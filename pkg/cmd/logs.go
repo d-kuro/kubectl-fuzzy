@@ -88,22 +88,22 @@ type LogsOptions struct {
 func (o *LogsOptions) AddFlags(flags *pflag.FlagSet) {
 	// kubectl flags
 	flags.BoolVarP(&o.allNamespaces, "all-namespaces", "A", false,
-		"If present, list the requested object(s) across all namespaces."+
+		"If present, list the requested object(s) across all namespaces. "+
 			"Namespace in current context is ignored even if specified with --namespace.")
 	flags.BoolVarP(&o.follow, "follow", "f", false,
 		"Specify if the logs should be streamed.")
 	flags.BoolVarP(&o.previous, "previous", "p", false,
 		"If true, print the logs for the previous instance of the container in a pod if it exists.")
 	flags.DurationVar(&o.since, "since", time.Second*0,
-		"Only return logs newer than a relative duration like 5s, 2m, or 3h. Defaults to all logs."+
+		"Only return logs newer than a relative duration like 5s, 2m, or 3h. Defaults to all logs. "+
 			"Only one of since-time / since may be used.")
 	flags.StringVar(&o.sinceTime, "since-time", "",
-		"Only return logs after a specific date (RFC3339). Defaults to all logs."+
+		"Only return logs after a specific date (RFC3339). Defaults to all logs. "+
 			"Only one of since-time / since may be used.")
 	flags.BoolVar(&o.timestamps, "timestamps", false,
 		"Include timestamps on each line in the log output.")
 	flags.Int64Var(&o.tailLines, "tail", -1,
-		"Lines of recent log file to display. Defaults to -1 with no selector,"+
+		"Lines of recent log file to display. Defaults to -1 with no selector, "+
 			"showing all log lines otherwise 10, if a selector is provided.")
 	flags.Int64Var(&o.limitBytes, "limit-bytes", 0,
 		"Maximum bytes of logs to return. Defaults to no limit.")
