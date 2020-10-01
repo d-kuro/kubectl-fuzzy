@@ -10,5 +10,13 @@
   ],
   "ignoreDeps": [
     "k8s.io/client-go"
+  ],
+  "regexManagers": [
+    {
+      "fileMatch": ["^\\.github\\/workflows\\/go\\.yaml$"],
+      "matchStrings": ["version: (?<currentValue>.*?)\\n"],
+      "depNameTemplate": "golangci/golangci-lint",
+      "datasourceTemplate": "github-releases"
+    }
   ]
 }
