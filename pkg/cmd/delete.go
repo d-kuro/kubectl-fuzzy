@@ -31,6 +31,7 @@ func NewCmdDelete(config *genericclioptions.ConfigFlags, streams genericclioptio
 		Example:       "", // TODO
 		SilenceUsage:  true,
 		SilenceErrors: true,
+		SuggestFor:    []string{"rm"},
 		RunE: func(c *cobra.Command, args []string) error {
 			if err := o.Complete(c, args); err != nil {
 				return err
