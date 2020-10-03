@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/d-kuro/kubectl-fuzzy/pkg/fuzzyfinder"
@@ -17,7 +16,7 @@ import (
 
 const (
 	exampleDescribe = `
-	# Selecting a Object with the fuzzy finder and view the log and show details
+	# Selecting an object with the fuzzy finder and view the log and show details
 	kubectl fuzzy describe TYPE [flags]
 `
 )
@@ -28,7 +27,7 @@ func NewCmdDescribe(config *genericclioptions.ConfigFlags, streams genericcliopt
 
 	cmd := &cobra.Command{
 		Use:           "describe",
-		Short:         "Selecting a object with the fuzzy finder and show details",
+		Short:         "Selecting an object with the fuzzy finder and show details",
 		Example:       exampleDescribe,
 		SilenceUsage:  true,
 		SilenceErrors: true,
@@ -158,7 +157,7 @@ func (o *DescribeOptions) Run(ctx context.Context, args []string) error {
 	}
 
 	if len(infos) == 0 {
-		return errors.New("no resources found")
+		return fmt.Errorf("resource not found")
 	}
 
 	var printer printers.ResourcePrinter

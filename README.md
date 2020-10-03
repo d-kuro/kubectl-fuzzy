@@ -55,14 +55,12 @@ Usage:
 
 Available Commands:
   create      Create a resource
-  describe    Selecting a object with the fuzzy finder and show details
+  delete      Selecting an object with the fuzzy finder and delete
+  describe    Selecting an object with the fuzzy finder and show details
   exec        Selecting a Pod with the fuzzy finder and execute a command in a container
   help        Help about any command
   logs        Selecting a Pod with the fuzzy finder and view the log
   version     Show version
-
-Flags:
-  -h, --help   help for kubectl-fuzzy
 
 Use "kubectl-fuzzy [command] --help" for more information about a command.
 ```
@@ -73,6 +71,7 @@ Use "kubectl-fuzzy [command] --help" for more information about a command.
 * [x] `kubectl exec`
 * [x] `kubectl describe`
 * [x] `kubectl create job --from=cronjob`
+* [x] `kubectl delete`
 * anything else...
 
 > 📝 See the [documentation](./docs/commands.md) for support commands.

@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"context"
-	"errors"
+	"fmt"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -20,7 +20,7 @@ func NewCmdCreate(config *genericclioptions.ConfigFlags, streams genericclioptio
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(c *cobra.Command, args []string) error {
-			return errors.New("must specify resource, only supported job")
+			return fmt.Errorf("must specify resource, only supported job")
 		},
 	}
 
