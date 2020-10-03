@@ -17,7 +17,7 @@ func Handler(ctx context.Context, done chan struct{}) error {
 	case <-ctx.Done():
 		signal.Reset()
 
-		return nil
+		return ctx.Err()
 	case <-done:
 		return nil
 	case sig := <-sigCh:
