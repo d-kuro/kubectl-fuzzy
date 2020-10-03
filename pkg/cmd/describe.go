@@ -16,7 +16,7 @@ import (
 
 const (
 	exampleDescribe = `
-	# Selecting a Object with the fuzzy finder and view the log and show details
+	# Selecting an object with the fuzzy finder and view the log and show details
 	kubectl fuzzy describe TYPE [flags]
 `
 )
@@ -27,7 +27,7 @@ func NewCmdDescribe(config *genericclioptions.ConfigFlags, streams genericcliopt
 
 	cmd := &cobra.Command{
 		Use:           "describe",
-		Short:         "Selecting a object with the fuzzy finder and show details",
+		Short:         "Selecting an object with the fuzzy finder and show details",
 		Example:       exampleDescribe,
 		SilenceUsage:  true,
 		SilenceErrors: true,

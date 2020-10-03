@@ -24,7 +24,7 @@ import (
 
 const (
 	exampleDelete = `
-	# Selecting a object with the fuzzy finder and delete
+	# Selecting an object with the fuzzy finder and delete
 	kubectl fuzzy delete TYPE [flags]
 `
 )
@@ -35,7 +35,7 @@ func NewCmdDelete(config *genericclioptions.ConfigFlags, streams genericclioptio
 
 	cmd := &cobra.Command{
 		Use:           "delete",
-		Short:         "Selecting a object with the fuzzy finder and delete",
+		Short:         "Selecting an object with the fuzzy finder and delete",
 		Example:       exampleDelete,
 		SilenceUsage:  true,
 		SilenceErrors: true,
