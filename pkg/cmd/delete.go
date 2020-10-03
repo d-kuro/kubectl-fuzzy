@@ -22,13 +22,21 @@ import (
 	cmdwait "k8s.io/kubectl/pkg/cmd/wait"
 )
 
+const (
+	exampleDelete = `
+	# Selecting a object with the fuzzy finder and delete
+	kubectl fuzzy delete TYPE [flags]
+`
+)
+
+// NewCmdDelete provides a cobra command wrapping DeleteOptions.
 func NewCmdDelete(config *genericclioptions.ConfigFlags, streams genericclioptions.IOStreams) *cobra.Command {
 	o := NewDeleteOptions(config, streams)
 
 	cmd := &cobra.Command{
 		Use:           "delete",
-		Short:         "Selecting a object with the fuzzy finder and delete object",
-		Example:       "", // TODO
+		Short:         "Selecting a object with the fuzzy finder and delete",
+		Example:       exampleDelete,
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		SuggestFor:    []string{"rm"},
@@ -80,7 +88,6 @@ type DeleteOptions struct {
 	output string
 
 	dynamicClient dynamic.Interface
-	mapper        meta.RESTMapper
 	namespace     string
 
 	preview       bool
@@ -186,11 +193,6 @@ func (o *DeleteOptions) Complete(cmd *cobra.Command, args []string) error {
 	o.dryRunVerifier = resource.NewDryRunVerifier(dynamicClient, discoveryClient)
 	o.dynamicClient = dynamicClient
 	o.namespace = cmdNamespace
-
-	o.mapper, err = o.configFlags.ToRESTMapper()
-	if err != nil {
-		return err
-	}
 
 	return nil
 }
