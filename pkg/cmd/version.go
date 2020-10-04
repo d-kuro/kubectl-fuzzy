@@ -16,6 +16,7 @@ func NewCmdVersion() *cobra.Command {
 	return &cobra.Command{
 		Use:                   "version",
 		Short:                 "Show version",
+		SilenceUsage:          true,
 		DisableFlagsInUseLine: true,
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Fprintf(os.Stdout, "version: %s (rev: %s)\n", Version, Revision)

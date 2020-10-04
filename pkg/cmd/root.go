@@ -11,6 +11,7 @@ func NewCmdRoot(streams genericclioptions.IOStreams) *cobra.Command {
 		Use:                   "kubectl-fuzzy",
 		Short:                 "Fuzzy Finder kubectl",
 		SilenceUsage:          true,
+		SilenceErrors:         true,
 		DisableFlagsInUseLine: true,
 		RunE: func(c *cobra.Command, args []string) error {
 			if err := c.Usage(); err != nil {
