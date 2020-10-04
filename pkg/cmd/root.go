@@ -8,9 +8,10 @@ import (
 // NewCmdRoot return a cobra root command.
 func NewCmdRoot(streams genericclioptions.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:          "kubectl-fuzzy",
-		Short:        "Fuzzy Finder kubectl",
-		SilenceUsage: true,
+		Use:                   "kubectl-fuzzy",
+		Short:                 "Fuzzy Finder kubectl",
+		SilenceUsage:          true,
+		DisableFlagsInUseLine: true,
 		RunE: func(c *cobra.Command, args []string) error {
 			if err := c.Usage(); err != nil {
 				return err
