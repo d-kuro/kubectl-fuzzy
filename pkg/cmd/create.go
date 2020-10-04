@@ -17,9 +17,9 @@ func NewCmdCreate(config *genericclioptions.ConfigFlags, streams genericclioptio
 	cmd := &cobra.Command{
 		Use:                   "create",
 		Short:                 "Create a resource",
-		DisableFlagsInUseLine: true,
 		SilenceUsage:          true,
 		SilenceErrors:         true,
+		DisableFlagsInUseLine: true,
 		RunE: func(c *cobra.Command, args []string) error {
 			return fmt.Errorf("must specify resource, only supported job")
 		},
