@@ -50,7 +50,7 @@ $ kubectl fuzzy -h
 Fuzzy Finder kubectl
 
 Usage:
-  kubectl-fuzzy [flags]
+  kubectl-fuzzy
   kubectl-fuzzy [command]
 
 Available Commands:
