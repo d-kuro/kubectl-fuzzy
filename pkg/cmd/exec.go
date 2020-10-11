@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/d-kuro/kubectl-fuzzy/pkg/fuzzyfinder"
 	"github.com/d-kuro/kubectl-fuzzy/pkg/kubernetes"
@@ -145,6 +146,10 @@ func (o *ExecOptions) Complete(cmd *cobra.Command, args []string, argsLenAtDash 
 
 	o.client = client.CoreV1()
 	o.builder = resource.NewBuilder(o.configFlags)
+
+	if !o.preview {
+		o.preview = os.Getenv(previewEnabledEnvVar) == "true"
+	}
 
 	if !o.allNamespaces {
 		kubeConfig := o.configFlags.ToRawKubeConfigLoader()
