@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -152,7 +153,7 @@ func (o *DeleteOptions) Complete(cmd *cobra.Command, args []string) error {
 	}
 
 	if !o.preview {
-		o.preview = os.Getenv(previewEnabledEnvVar) == "true"
+		o.preview, _ = strconv.ParseBool(os.Getenv(previewEnabledEnvVar))
 	}
 
 	o.warnClusterScope = enforceNamespace && !o.allNamespaces

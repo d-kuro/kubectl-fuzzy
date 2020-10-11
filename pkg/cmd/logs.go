@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/d-kuro/kubectl-fuzzy/pkg/fuzzyfinder"
@@ -134,7 +135,7 @@ func (o *LogsOptions) Complete(cmd *cobra.Command, args []string) error {
 	}
 
 	if !o.preview {
-		o.preview = os.Getenv(previewEnabledEnvVar) == "true"
+		o.preview, _ = strconv.ParseBool(os.Getenv(previewEnabledEnvVar))
 	}
 
 	o.podClient = client.CoreV1()
