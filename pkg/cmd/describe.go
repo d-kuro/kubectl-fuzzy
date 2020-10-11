@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/d-kuro/kubectl-fuzzy/pkg/fuzzyfinder"
 	"github.com/spf13/cobra"
@@ -119,7 +120,7 @@ func (o *DescribeOptions) Complete(cmd *cobra.Command, args []string) error {
 	o.builderArgs = args
 
 	if !o.preview {
-		o.preview = os.Getenv(previewEnabledEnvVar) == "true"
+		o.preview, _ = strconv.ParseBool(os.Getenv(previewEnabledEnvVar))
 	}
 
 	if !o.allNamespaces {
