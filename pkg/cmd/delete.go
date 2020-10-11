@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
@@ -148,6 +149,10 @@ func (o *DeleteOptions) Complete(cmd *cobra.Command, args []string) error {
 	cmdNamespace, enforceNamespace, err := o.configFlags.ToRawKubeConfigLoader().Namespace()
 	if err != nil {
 		return fmt.Errorf("faild to get namespace from kube config: %w", err)
+	}
+
+	if !o.preview {
+		o.preview = os.Getenv(previewEnabledEnvVar) == "true"
 	}
 
 	o.warnClusterScope = enforceNamespace && !o.allNamespaces

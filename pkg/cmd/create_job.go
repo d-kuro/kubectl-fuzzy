@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/d-kuro/kubectl-fuzzy/pkg/fuzzyfinder"
 	"github.com/d-kuro/kubectl-fuzzy/pkg/kubernetes"
@@ -120,6 +121,10 @@ func (o *CreateJobOptions) Complete(cmd *cobra.Command, args []string) error {
 
 	if o.from != "cronjob" {
 		return fmt.Errorf("must specify resource, only supported cronjob")
+	}
+
+	if !o.preview {
+		o.preview = os.Getenv(previewEnabledEnvVar) == "true"
 	}
 
 	if len(args) >= 1 {

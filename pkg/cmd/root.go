@@ -5,6 +5,10 @@ import (
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 )
 
+const (
+	previewEnabledEnvVar = "KUBE_FUZZY_PREVIEW_ENABLED"
+)
+
 // NewCmdRoot return a cobra root command.
 func NewCmdRoot(streams genericclioptions.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{
