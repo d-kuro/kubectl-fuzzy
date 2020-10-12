@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/d-kuro/kubectl-fuzzy/pkg/fuzzyfinder"
@@ -130,6 +132,10 @@ func (o *LogsOptions) Complete(cmd *cobra.Command, args []string) error {
 	client, err := kubernetes.NewClient(o.configFlags)
 	if err != nil {
 		return fmt.Errorf("failed to new Kubernetes client: %w", err)
+	}
+
+	if !o.preview {
+		o.preview, _ = strconv.ParseBool(os.Getenv(previewEnabledEnvVar))
 	}
 
 	o.podClient = client.CoreV1()
