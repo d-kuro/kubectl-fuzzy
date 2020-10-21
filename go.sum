@@ -618,6 +618,7 @@ k8s.io/cli-runtime v0.19.3/go.mod h1:q+l845i5/uWzcUpCrl+L4f3XLaJi8ZeLVQ/decwty0A
 k8s.io/client-go v0.19.3 h1:ctqR1nQ52NUs6LpI0w+a5U+xjYwflFwA13OJKcicMxg=
 k8s.io/client-go v0.19.3/go.mod h1:+eEMktZM+MG0KO+PTkci8xnbCZHvj9TqR6Q1XDUIJOM=
 k8s.io/code-generator v0.19.3/go.mod h1:moqLn7w0t9cMs4+5CQyxnfA/HV8MF6aAVENF+WZZhgk=
+k8s.io/component-base v0.19.3 h1:c+DzDNAQFlaoyX+yv8YuWi8xmlQvvY5DnJGbaz5U74o=
 k8s.io/component-base v0.19.3/go.mod h1:WhLWSIefQn8W8jxSLl5WNiR6z8oyMe/8Zywg7alOkRc=
 k8s.io/gengo v0.0.0-20200413195148-3a45101e95ac/go.mod h1:ezvh/TsK7cY6rbqRK0oQQ8IAqLxYwwyPxAX1Pzy0ii0=
 k8s.io/gengo v0.0.0-20200428234225-8167cfdcfc14/go.mod h1:ezvh/TsK7cY6rbqRK0oQQ8IAqLxYwwyPxAX1Pzy0ii0=
@@ -628,6 +629,7 @@ k8s.io/klog/v2 v2.3.0 h1:WmkrnW7fdrm0/DMClc+HIxtftvxVIPAhlVwMQo5yLco=
 k8s.io/klog/v2 v2.3.0/go.mod h1:Od+F08eJP+W3HUb4pSrPpgp9DGU4GzlpG/TmITuYh/Y=
 k8s.io/kube-openapi v0.0.0-20200805222855-6aeccd4b50c6 h1:+WnxoVtG8TMiudHBSEtrVL1egv36TkkJm+bA8AxicmQ=
 k8s.io/kube-openapi v0.0.0-20200805222855-6aeccd4b50c6/go.mod h1:UuqjUnNftUyPE5H64/qeyjQoUZhGpeFDVdxjTeEVN2o=
+k8s.io/kubectl v0.19.3 h1:T8IHHpg+uRIfn34wqJ8wHG5bbH+VV5FNPtJ+jKcho1U=
 k8s.io/kubectl v0.19.3/go.mod h1:t5cscfrAuHUvEGNyNJjPKt+rGlaJzk8jrKYHXxEsANE=
 k8s.io/metrics v0.19.3/go.mod h1:Eap/Lk1FiAIjkaArFuv41v+ph6dbDpVGwAg7jMI+4vg=
 k8s.io/utils v0.0.0-20200729134348-d5654de09c73 h1:uJmqzgNWG7XyClnU/mLPBWwfKKF1K8Hf8whTseBgJcg=
