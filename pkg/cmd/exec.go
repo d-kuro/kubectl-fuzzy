@@ -30,7 +30,7 @@ const (
 `
 )
 
-// NewCmdExec provides a cobra command wrapping ExecOptions.
+// NewCmdExec provides a cobra command wrapping ExecOptions
 func NewCmdExec(config *genericclioptions.ConfigFlags, streams genericclioptions.IOStreams) *cobra.Command {
 	o := NewExecOptions(config, streams)
 
@@ -217,7 +217,7 @@ func (o *ExecOptions) Run(ctx context.Context) error {
 
 	uncastVersionedObj, err := scheme.Scheme.ConvertToVersion(info.Object, corev1.SchemeGroupVersion)
 	if err != nil {
-		return fmt.Errorf("from must be an existing cronjob: %v", err)
+		return fmt.Errorf("failed to convert to version: %w", err)
 	}
 
 	pod, ok := uncastVersionedObj.(*corev1.Pod)

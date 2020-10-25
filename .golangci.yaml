@@ -3,6 +3,8 @@ run:
 linters:
   enable-all: true
   disable:
+    - exhaustivestruct
     - funlen
     - goerr113
     - maligned
+    - wrapcheck
