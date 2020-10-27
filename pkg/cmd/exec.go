@@ -217,7 +217,7 @@ func (o *ExecOptions) Run(ctx context.Context) error {
 
 	uncastVersionedObj, err := scheme.Scheme.ConvertToVersion(info.Object, corev1.SchemeGroupVersion)
 	if err != nil {
-		return fmt.Errorf("from must be an existing cronjob: %v", err)
+		return fmt.Errorf("failed to convert object: %w", err)
 	}
 
 	pod, ok := uncastVersionedObj.(*corev1.Pod)
