@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/ktr0731/go-fuzzyfinder v0.2.1
-	github.com/moby/term v0.0.0-20200915141129-7f0af18e79f2
+	github.com/moby/term v0.0.0-20201101162038-25d840ce174a
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/pflag v1.0.5
 	github.com/tidwall/sjson v1.1.2
