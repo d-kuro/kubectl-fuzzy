@@ -15,7 +15,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
       - name: Run golangci-lint with reviewdog
-        uses: reviewdog/action-golangci-lint@v1.14.0
+        uses: reviewdog/action-golangci-lint@v1.14.1
         with:
           golangci_lint_flags: "--timeout=3m0s --fix"
           level: warning
