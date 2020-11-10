@@ -1,0 +1,22 @@
+name: renovate
+on:
+  push:
+    branches:
+      - renovate/*
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      # ref: https://kamatama41.hatenablog.com/entry/2020/06/04/202845
+      - name: Update go.sum
+        uses: at-wat/go-sum-fix-action@v0
+        with:
+          git_user: d-kuro
+          git_email: kurosawa7620@gmail.com
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          commit_style: squash
+          push: force
