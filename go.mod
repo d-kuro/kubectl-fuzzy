@@ -11,8 +11,8 @@ require (
 	golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9
 	k8s.io/api v0.19.4
 	k8s.io/apimachinery v0.19.4
-	k8s.io/cli-runtime v0.19.3
-	k8s.io/client-go v0.19.3
+	k8s.io/cli-runtime v0.19.4
+	k8s.io/client-go v0.19.4
 	k8s.io/klog/v2 v2.4.0
 	k8s.io/kubectl v0.19.3
 	sigs.k8s.io/yaml v1.2.0
