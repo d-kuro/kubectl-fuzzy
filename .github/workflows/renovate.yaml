@@ -1,0 +1,29 @@
+name: renovate
+on:
+  push:
+    branches:
+      - renovate/*
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.15
+      - name: go mod tidy
+        shell: bash --noprofile --norc {0}
+        run: |
+          go mod tidy && git diff -s --exit-code go.sum
+          if [ $? -ne 0 ]; then
+            git remote set-url origin https://${GIT_USER}:${GITHUB_TOKEN}@github.com/d-kuro/kubectl-fuzzy.git
+            git config --global user.name ${GIT_USER}
+            git config --global user.email ${GIT_EMAIL}
+            git add go.mod go.sum
+            git commit --amend --no-edit
+            git push -f origin HEAD:${GITHUB_REF}
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_USER: d-kuro
+          GIT_EMAIL: kurosawa7620@gmail.com

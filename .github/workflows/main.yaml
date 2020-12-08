@@ -1,0 +1,38 @@
+name: main
+on:
+  push:
+    branches: [ main ]
+    tags: [ "v*" ]
+    paths-ignore: [ '**.md' ]
+  pull_request:
+    types: [ opened, synchronize ]
+    paths-ignore: [ '**.md' ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.15
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      # ref: https://text.superbrothers.dev/200510-ensure-go-mod-is-already-tidied-on-ci/
+      - name: Ensure go.mod is already tidied
+        run: go mod tidy && git diff -s --exit-code go.sum
+      - name: Run golangci-lint with reviewdog
+        uses: reviewdog/action-golangci-lint@v1.14.1
+        with:
+          golangci_lint_flags: "--timeout=3m0s --fix"
+          level: warning
+          filter_mode: nofilter
+          reporter: github-pr-review
+      - uses: reviewdog/action-suggester@v1
+        with:
+          tool_name: golangci-lint
+      - name: Run tests
+        run: go test -race -v ./...
