@@ -20,8 +20,8 @@ jobs:
             git config --global user.name ${GIT_USER}
             git config --global user.email ${GIT_EMAIL}
             git add go.mod go.sum
-            git commit --amend --no-edit
-            git push -f origin HEAD:${GITHUB_REF}
+            git commit -m "go mod tidy"
+            git push origin HEAD:${GITHUB_REF}
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
