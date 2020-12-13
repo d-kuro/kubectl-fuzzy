@@ -12,16 +12,19 @@ jobs:
         with:
           go-version: 1.15
       - name: go mod tidy
-        shell: bash --noprofile --norc {0}
         run: |
-          go mod tidy && git diff -s --exit-code go.sum
-          if [ $? -ne 0 ]; then
-            git remote set-url origin https://${GIT_USER}:${GITHUB_TOKEN}@github.com/d-kuro/kubectl-fuzzy.git
+          if [ ! "$(git show HEAD --pretty=format:%ae -s)" = "bot@renovateapp.com" ]; then
+            echo "HEAD commit author is not Renovate Bot" >&2
+            exit 0
+          fi
+
+          if [ ! go mod tidy && git diff -s --exit-code go.sum ]; then
+            git remote set-url origin https://${GIT_USER}:${GITHUB_TOKEN}@github.com/d-kuro/scheduled-pod-autoscaler.git
             git config --global user.name ${GIT_USER}
             git config --global user.email ${GIT_EMAIL}
             git add go.mod go.sum
-            git commit -m "go mod tidy"
-            git push origin HEAD:${GITHUB_REF}
+            git commit --amend --no-edit
+            git push -f origin $(git symbolic-ref --short --quiet HEAD)
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
