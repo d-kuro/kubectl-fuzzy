@@ -19,7 +19,7 @@ jobs:
           fi
 
           if [ ! "$(go mod tidy && git diff -s --exit-code go.sum)" ]; then
-            git remote set-url origin https://${GIT_USER}:${GITHUB_TOKEN}@github.com/d-kuro/kubectl-fuzzy.git
+            git remote set-url origin https://d-kuro:${GITHUB_TOKEN}@github.com/d-kuro/kubectl-fuzzy.git
             git config --global user.name ${GIT_USER}
             git config --global user.email ${GIT_EMAIL}
             git add go.mod go.sum
