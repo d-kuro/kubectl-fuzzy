@@ -28,5 +28,5 @@ jobs:
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GIT_USER: d-kuro
-          GIT_EMAIL: kurosawa7620@gmail.com
+          GIT_USER: Renovate Bot
+          GIT_EMAIL: bot@renovateapp.com
