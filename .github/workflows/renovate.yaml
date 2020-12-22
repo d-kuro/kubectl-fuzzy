@@ -1,0 +1,32 @@
+name: renovate
+on:
+  push:
+    branches:
+      - renovate/*
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.15
+      - name: go mod tidy
+        run: |
+          if [ ! "$(git show HEAD --pretty=format:%ae -s)" = "bot@renovateapp.com" ]; then
+            echo "HEAD commit author is not Renovate Bot" >&2
+            exit 0
+          fi
+
+          if [ ! "$(go mod tidy && git diff -s --exit-code go.sum)" ]; then
+            git remote set-url origin https://${GIT_USER}:${GITHUB_TOKEN}@github.com/d-kuro/kubectl-fuzzy.git
+            git config --global user.name ${GIT_USER}
+            git config --global user.email ${GIT_EMAIL}
+            git add go.mod go.sum
+            git commit --amend --no-edit
+            git push -f origin $(git symbolic-ref --short --quiet HEAD)
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_USER: d-kuro
+          GIT_EMAIL: kurosawa7620@gmail.com
