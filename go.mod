@@ -3,7 +3,7 @@ module github.com/d-kuro/kubectl-fuzzy
 go 1.15
 
 require (
-	github.com/ktr0731/go-fuzzyfinder v0.3.0
+	github.com/ktr0731/go-fuzzyfinder v0.3.1
 	github.com/moby/term v0.0.0-20201216013528-df9cb8a40635
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/pflag v1.0.5
