@@ -3,6 +3,7 @@ run:
 linters:
   enable-all: true
   disable:
+    - cyclop
     - exhaustivestruct
     - funlen
     - goerr113

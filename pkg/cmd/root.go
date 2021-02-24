@@ -18,11 +18,7 @@ func NewCmdRoot(streams genericclioptions.IOStreams) *cobra.Command {
 		SilenceErrors:         true,
 		DisableFlagsInUseLine: true,
 		RunE: func(c *cobra.Command, args []string) error {
-			if err := c.Usage(); err != nil {
-				return err
-			}
-
-			return nil
+			return c.Usage()
 		},
 	}
 

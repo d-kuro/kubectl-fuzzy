@@ -47,11 +47,7 @@ func NewCmdLogs(config *genericclioptions.ConfigFlags, streams genericclioptions
 				return err
 			}
 
-			if err := o.Run(c.Context()); err != nil {
-				return err
-			}
-
-			return nil
+			return o.Run(c.Context())
 		},
 	}
 
