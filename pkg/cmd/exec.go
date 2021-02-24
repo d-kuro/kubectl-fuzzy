@@ -51,11 +51,7 @@ func NewCmdExec(config *genericclioptions.ConfigFlags, streams genericclioptions
 				return err
 			}
 
-			if err := o.Run(c.Context()); err != nil {
-				return err
-			}
-
-			return nil
+			return o.Run(c.Context())
 		},
 	}
 
@@ -251,11 +247,7 @@ func (o *ExecOptions) Run(ctx context.Context) error {
 		o.ErrOut = nil
 	}
 
-	if err := t.Safe(o.ExecFunc(pod, containerName, t, sizeQueue)); err != nil {
-		return err
-	}
-
-	return nil
+	return t.Safe(o.ExecFunc(pod, containerName, t, sizeQueue))
 }
 
 // ExecFunc returns a function for executing the execute a command in a container.

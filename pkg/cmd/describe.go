@@ -42,11 +42,7 @@ func NewCmdDescribe(config *genericclioptions.ConfigFlags, streams genericcliopt
 				return err
 			}
 
-			if err := o.Run(c.Context(), args); err != nil {
-				return err
-			}
-
-			return nil
+			return o.Run(c.Context(), args)
 		},
 	}
 

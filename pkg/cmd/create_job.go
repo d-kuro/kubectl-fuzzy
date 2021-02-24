@@ -49,11 +49,7 @@ func NewCmdCreateJob(config *genericclioptions.ConfigFlags, streams genericcliop
 				return err
 			}
 
-			if err := o.Run(c.Context()); err != nil {
-				return err
-			}
-
-			return nil
+			return o.Run(c.Context())
 		},
 	}
 

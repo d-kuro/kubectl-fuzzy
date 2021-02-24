@@ -51,11 +51,7 @@ func NewCmdDelete(config *genericclioptions.ConfigFlags, streams genericclioptio
 				return err
 			}
 
-			if err := o.Run(c.Context(), args); err != nil {
-				return err
-			}
-
-			return nil
+			return o.Run(c.Context(), args)
 		},
 	}
 

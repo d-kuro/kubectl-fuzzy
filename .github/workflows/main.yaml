@@ -26,7 +26,7 @@ jobs:
         run: go mod tidy && git diff -s --exit-code go.sum
       - uses: golangci/golangci-lint-action@v2.5.0
         with:
-          version: v1.33
+          version: v1.37.1
           args: --timeout=3m0s
       - name: Run tests
         run: go test -race -v ./...
