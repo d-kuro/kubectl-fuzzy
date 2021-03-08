@@ -1,6 +1,6 @@
 # kubectl-fuzzy
 
-![](https://github.com/d-kuro/kubectl-fuzzy/workflows/Build/badge.svg)
+![](https://github.com/d-kuro/kubectl-fuzzy/workflows/main/badge.svg)
 
 Fuzzy and partial string search for kubectl
 
