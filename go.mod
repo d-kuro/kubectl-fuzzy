@@ -10,7 +10,7 @@ require (
 	github.com/tidwall/sjson v1.1.5
 	k8s.io/api v0.20.5
 	k8s.io/apimachinery v0.20.5
-	k8s.io/cli-runtime v0.20.4
+	k8s.io/cli-runtime v0.20.5
 	k8s.io/client-go v0.20.5
 	k8s.io/klog/v2 v2.8.0
 	k8s.io/kubectl v0.20.4
