@@ -1,5 +1,5 @@
 builds:
-  - main: ./cmd/kubectl-fuzzy/kubectl-fuzzy.go
+  - main: ./cmd/kubectl-fuzzy/main.go
     binary: kubectl-fuzzy
     goos:
       - windows
