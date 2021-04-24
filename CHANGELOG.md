@@ -1,6 +1,6 @@
 # Changelog
 
-## v1.9.0 (Not released)
+## v1.9.0
 
 ### Enhancement
 

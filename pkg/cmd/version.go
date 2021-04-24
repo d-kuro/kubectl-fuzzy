@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const Version = "v1.8.1"
+const Version = "v1.9.0"
 
 var Revision = "development" //nolint:gochecknoglobals
 
