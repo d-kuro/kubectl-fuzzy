@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/pflag"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 
-	//  import the auth plugin package
+	// import the auth plugin package.
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 )
 

@@ -26,7 +26,6 @@ func NewCmdCreate(config *genericclioptions.ConfigFlags, streams genericclioptio
 	}
 
 	flags := cmd.Flags()
-	o.configFlags.AddFlags(flags)
 	o.AddFlags(flags)
 
 	cmd.AddCommand(NewCmdCreateJob(config, streams))
