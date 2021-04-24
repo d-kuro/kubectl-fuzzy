@@ -26,7 +26,10 @@ jobs:
         run: go mod tidy && git diff -s --exit-code go.sum
       - uses: golangci/golangci-lint-action@v2.5.2
         with:
-          version: v1.37.1
+          version: latest
           args: --timeout=3m0s
+          skip-go-installation: true
+          skip-pkg-cache: true
+          skip-build-cache: true
       - name: Run tests
         run: go test -race -v ./...
