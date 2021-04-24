@@ -1,5 +1,26 @@
 # Changelog
 
+## v1.9.0 (Not released)
+
+### Enhancement
+
+* Bump Go to v1.16 #162
+* Bump Kubernetes library to v0.21.0
+
+### Bug Fix
+
+* Fix unsupported printer type error #182
+
+#### Fix unsupported printer type error
+
+A bug existed that caused error messages to appear in the preview window due to a Kubernetes upgrade.
+
+> error: unsupported printer type: *printers.OmitManagedFieldsPrinter
+
+Fixed a bug so that the preview window is displayed properly.
+
+Also, `.metadata.managedFields` field is now omitted even when `--raw-preview` is enabled.
+
 ## v1.8.1
 
 ### Enhancement
