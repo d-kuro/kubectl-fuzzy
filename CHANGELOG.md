@@ -6,6 +6,7 @@
 
 * Bump Go to v1.16 #162
 * Bump Kubernetes library to v0.21.0
+* Added darwin/arm64 release build
 
 ### Bug Fix
 
