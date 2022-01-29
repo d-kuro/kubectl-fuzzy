@@ -10,10 +10,10 @@ require (
 	github.com/onsi/gomega v1.10.2 // indirect
 	github.com/spf13/cobra v1.3.0
 	github.com/spf13/pflag v1.0.5
-	k8s.io/api v0.21.2
-	k8s.io/apimachinery v0.21.2
+	k8s.io/api v0.23.3
+	k8s.io/apimachinery v0.23.3
 	k8s.io/cli-runtime v0.21.2
-	k8s.io/client-go v0.21.2
-	k8s.io/klog/v2 v2.9.0
+	k8s.io/client-go v0.23.3
+	k8s.io/klog/v2 v2.30.0
 	k8s.io/kubectl v0.21.2
 )
