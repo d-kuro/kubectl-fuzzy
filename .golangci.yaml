@@ -3,9 +3,12 @@ run:
 linters:
   enable-all: true
   disable:
+    - contextcheck
     - cyclop
     - exhaustivestruct
     - funlen
     - goerr113
+    - ireturn
     - maligned
     - wrapcheck
+    - varnamelen
