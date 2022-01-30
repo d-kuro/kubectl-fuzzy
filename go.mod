@@ -5,7 +5,7 @@ go 1.16
 require (
 	github.com/imdario/mergo v0.3.11 // indirect
 	github.com/ktr0731/go-fuzzyfinder v0.5.1
-	github.com/moby/term v0.0.0-20201216013528-df9cb8a40635
+	github.com/moby/term v0.0.0-20210610120745-9d4ed1856297
 	github.com/onsi/ginkgo v1.14.1 // indirect
 	github.com/onsi/gomega v1.10.2 // indirect
 	github.com/spf13/cobra v1.3.0
@@ -15,5 +15,5 @@ require (
 	k8s.io/cli-runtime v0.23.3
 	k8s.io/client-go v0.23.3
 	k8s.io/klog/v2 v2.30.0
-	k8s.io/kubectl v0.21.2
+	k8s.io/kubectl v0.23.3
 )
