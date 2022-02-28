@@ -24,7 +24,7 @@ jobs:
       # ref: https://text.superbrothers.dev/200510-ensure-go-mod-is-already-tidied-on-ci/
       - name: Ensure go.mod is already tidied
         run: go mod tidy && git diff -s --exit-code go.sum
-      - uses: golangci/golangci-lint-action@v2.5.2
+      - uses: golangci/golangci-lint-action@v3.1.0
         with:
           version: latest
           args: --timeout=3m0s
