@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/ktr0731/go-fuzzyfinder v0.5.1
 	github.com/moby/term v0.0.0-20210610120745-9d4ed1856297
-	github.com/spf13/cobra v1.3.0
+	github.com/spf13/cobra v1.4.0
 	github.com/spf13/pflag v1.0.5
 	k8s.io/api v0.23.3
 	k8s.io/apimachinery v0.23.3
