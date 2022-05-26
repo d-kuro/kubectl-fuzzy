@@ -52,7 +52,6 @@ func omitMetadata(o runtime.Object) runtime.Object {
 	a.SetDeletionGracePeriodSeconds(nil)
 	a.SetFinalizers(nil)
 	a.SetOwnerReferences(nil)
-	a.SetClusterName("")
 	a.SetManagedFields(nil)
 
 	omitLastAppliedConfigurationAnnotation(a)
