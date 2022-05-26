@@ -81,7 +81,7 @@ type DeleteOptions struct {
 	timeout     time.Duration
 
 	dryRunStrategy cmdutil.DryRunStrategy
-	dryRunVerifier *resource.DryRunVerifier
+	dryRunVerifier *resource.QueryParamVerifier
 
 	output string
 
@@ -192,7 +192,7 @@ func (o *DeleteOptions) Complete(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to create discovery client: %w", err)
 	}
 
-	o.dryRunVerifier = resource.NewDryRunVerifier(dynamicClient, discoveryClient)
+	o.dryRunVerifier = resource.NewQueryParamVerifier(dynamicClient, discoveryClient, resource.QueryParamDryRun)
 	o.dynamicClient = dynamicClient
 	o.namespace = cmdNamespace
 
