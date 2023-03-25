@@ -1,6 +1,6 @@
 module github.com/d-kuro/kubectl-fuzzy
 
-go 1.18
+go 1.20
 
 require (
 	github.com/ktr0731/go-fuzzyfinder v0.7.0
