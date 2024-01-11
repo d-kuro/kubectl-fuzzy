@@ -11,7 +11,7 @@ require (
 	k8s.io/apimachinery v0.25.3
 	k8s.io/cli-runtime v0.25.3
 	k8s.io/client-go v0.25.3
-	k8s.io/klog/v2 v2.100.1
+	k8s.io/klog/v2 v2.120.0
 	k8s.io/kubectl v0.25.3
 )
 
@@ -37,7 +37,7 @@ require (
 	github.com/gdamore/encoding v1.0.0 // indirect
 	github.com/gdamore/tcell/v2 v2.6.0 // indirect
 	github.com/go-errors/errors v1.0.1 // indirect
-	github.com/go-logr/logr v1.2.3 // indirect
+	github.com/go-logr/logr v1.4.1 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/jsonreference v0.19.5 // indirect
 	github.com/go-openapi/swag v0.19.14 // indirect
