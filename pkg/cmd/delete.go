@@ -400,11 +400,11 @@ func (o *DeleteOptions) PrintObj(info *resource.Info) {
 
 	if o.output == "name" {
 		// -o name: prints resource/name
-		_ = fmt.Fprintf(o.Out, "%s/%s\n", kindString, info.Name)
+		_, _ = fmt.Fprintf(o.Out, "%s/%s\n", kindString, info.Name)
 
 		return
 	}
 
 	// understandable output by default
-	_ = fmt.Fprintf(o.Out, "%s \"%s\" %s\n", kindString, info.Name, operation)
+	_, _ = fmt.Fprintf(o.Out, "%s \"%s\" %s\n", kindString, info.Name, operation)
 }
