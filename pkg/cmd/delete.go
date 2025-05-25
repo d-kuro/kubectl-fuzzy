@@ -203,7 +203,7 @@ func (o *DeleteOptions) Complete(cmd *cobra.Command, args []string) error {
 func (o *DeleteOptions) Validate() error {
 	switch {
 	case o.gracePeriod == 0 && o.forceDeletion:
-		_ = fmt.Fprintln(o.ErrOut,
+		_, _ = fmt.Fprintln(o.ErrOut,
 			"warning: Immediate deletion does not wait for confirmation that the running resource has been terminated. "+
 				"The resource may continue to run on the cluster indefinitely.")
 	case o.gracePeriod > 0 && o.forceDeletion:
@@ -270,7 +270,7 @@ func (o *DeleteOptions) Run(ctx context.Context, args []string) error {
 	options.PropagationPolicy = &policy
 
 	if o.warnClusterScope && info.Mapping.Scope.Name() == meta.RESTScopeNameRoot {
-		_ = fmt.Fprintf(o.ErrOut, "warning: deleting cluster-scoped resources, not scoped to the provided namespace\n")
+		_, _ = fmt.Fprintf(o.ErrOut, "warning: deleting cluster-scoped resources, not scoped to the provided namespace\n")
 		o.warnClusterScope = false
 	}
 
