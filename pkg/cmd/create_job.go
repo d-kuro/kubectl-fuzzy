@@ -239,7 +239,7 @@ func (o *CreateJobOptions) createJobFromCronJob(cronJob *batchv1beta1.CronJob, n
 		Spec: cronJob.Spec.JobTemplate.Spec,
 	}
 	if name != nil {
-		job.ObjectMeta.Name = *name
+		job.Name = *name
 	}
 
 	return job

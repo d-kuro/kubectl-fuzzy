@@ -73,7 +73,7 @@ func Infos(infos []*resource.Info, opts ...Option) (*resource.Info, error) {
 				fmt.Fprintf(&b, "%s/", strings.ToLower(infos[i].Mapping.GroupVersionKind.GroupKind().String()))
 			}
 
-			fmt.Fprintf(&b, infos[i].Name)
+			fmt.Fprintf(&b, "%s", infos[i].Name)
 
 			if opt.allNamespaces && len(infos[i].Namespace) >= 1 {
 				fmt.Fprintf(&b, " (%s)", infos[i].Namespace)
