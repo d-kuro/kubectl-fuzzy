@@ -247,11 +247,11 @@ func (o *ExecOptions) Run(ctx context.Context) error {
 		o.ErrOut = nil
 	}
 
-	return t.Safe(o.ExecFunc(pod, containerName, t, sizeQueue))
+	return t.Safe(o.ExecFunc(ctx, pod, containerName, t, sizeQueue))
 }
 
 // ExecFunc returns a function for executing the execute a command in a container.
-func (o *ExecOptions) ExecFunc(pod *corev1.Pod, containerName string,
+func (o *ExecOptions) ExecFunc(ctx context.Context, pod *corev1.Pod, containerName string,
 	tty term.TTY, sizeQueue remotecommand.TerminalSizeQueue) func() error {
 	fn := func() error {
 		req := o.client.RESTClient().
@@ -279,7 +279,7 @@ func (o *ExecOptions) ExecFunc(pod *corev1.Pod, containerName string,
 			return err
 		}
 
-		return exec.Stream(remotecommand.StreamOptions{
+		return exec.StreamWithContext(ctx, remotecommand.StreamOptions{
 			Stdin:             o.In,
 			Stdout:            o.Out,
 			Stderr:            o.ErrOut,
