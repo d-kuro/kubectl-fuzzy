@@ -81,7 +81,6 @@ type DeleteOptions struct {
 	timeout     time.Duration
 
 	dryRunStrategy cmdutil.DryRunStrategy
-	dryRunVerifier *resource.QueryParamVerifier
 
 	output string
 
@@ -275,6 +274,7 @@ func (o *DeleteOptions) Run(ctx context.Context, args []string) error {
 	}
 
 	if o.dryRunStrategy == cmdutil.DryRunServer {
+		options.DryRun = []string{metav1.DryRunAll}
 	}
 
 	response, err := o.deleteResource(info, options)
