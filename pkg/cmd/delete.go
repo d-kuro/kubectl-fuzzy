@@ -187,12 +187,6 @@ func (o *DeleteOptions) Complete(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("faild to create dynamic client: %w", err)
 	}
 
-	discoveryClient, err := o.configFlags.ToDiscoveryClient()
-	if err != nil {
-		return fmt.Errorf("failed to create discovery client: %w", err)
-	}
-
-	o.dryRunVerifier = resource.NewQueryParamVerifier(dynamicClient, discoveryClient, resource.QueryParamDryRun)
 	o.dynamicClient = dynamicClient
 	o.namespace = cmdNamespace
 
@@ -281,9 +275,6 @@ func (o *DeleteOptions) Run(ctx context.Context, args []string) error {
 	}
 
 	if o.dryRunStrategy == cmdutil.DryRunServer {
-		if err := o.dryRunVerifier.HasSupport(info.Mapping.GroupVersionKind); err != nil {
-			return err
-		}
 	}
 
 	response, err := o.deleteResource(info, options)
