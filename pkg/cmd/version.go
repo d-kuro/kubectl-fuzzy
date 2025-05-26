@@ -23,7 +23,7 @@ func NewCmdVersion() *cobra.Command {
 		SilenceUsage:          true,
 		DisableFlagsInUseLine: true,
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Fprintf(os.Stdout, "version: %s (rev: %s)\n", Version, Revision)
+			_, _ = fmt.Fprintf(os.Stdout, "version: %s (rev: %s)\n", Version, Revision)
 		},
 	}
 }

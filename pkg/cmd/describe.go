@@ -190,7 +190,7 @@ func (o *DescribeOptions) Run(ctx context.Context, args []string) error {
 		return fmt.Errorf("failed to generates output: %w", err)
 	}
 
-	fmt.Fprintf(o.Out, "%s", s)
+	_, _ = fmt.Fprintf(o.Out, "%s", s)
 
 	return nil
 }

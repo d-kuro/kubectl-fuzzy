@@ -233,7 +233,7 @@ func (o *LogsOptions) Run(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	defer reader.Close()
+	defer func() { _ = reader.Close() }()
 
 	if _, err = io.Copy(o.Out, reader); err != nil {
 		return err

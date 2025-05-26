@@ -129,7 +129,7 @@ func (o *ExecOptions) Complete(cmd *cobra.Command, args []string, argsLenAtDash 
 	case argsLenAtDash > -1:
 		o.command = args[argsLenAtDash:]
 	case len(args) > 0:
-		fmt.Fprint(o.IOStreams.ErrOut,
+		_, _ = fmt.Fprint(o.ErrOut,
 			"kubectl exec fzf [COMMAND] is DEPRECATED and will be removed in a future version."+
 				"Use kubectl exec fzf -- [COMMAND] instead.\n")
 
@@ -315,7 +315,7 @@ func (o *streamOptions) SetupTTY() term.TTY {
 		o.tty = false
 
 		if o.ErrOut != nil {
-			fmt.Fprintln(o.ErrOut, "Unable to use a TTY - input is not a terminal or the right kind of file")
+			_, _ = fmt.Fprintln(o.ErrOut, "Unable to use a TTY - input is not a terminal or the right kind of file")
 		}
 
 		return t
