@@ -5,8 +5,8 @@ go 1.24.3
 require (
 	github.com/ktr0731/go-fuzzyfinder v0.9.0
 	github.com/moby/term v0.5.2
-	github.com/spf13/cobra v1.9.1
-	github.com/spf13/pflag v1.0.6
+	github.com/spf13/cobra v1.10.1
+	github.com/spf13/pflag v1.0.9
 	k8s.io/api v0.33.1
 	k8s.io/apimachinery v0.33.1
 	k8s.io/cli-runtime v0.33.1
